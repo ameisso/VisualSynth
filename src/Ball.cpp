@@ -4,7 +4,7 @@ Ball::Ball()
 {
     //ctor
 }
-Ball::Ball(int posx,int posy, int posz,float r_, float maxRadius_, float minRadius_, int nbCircles_, int noiseFactor_, int circleWidth_, int circleWidthFactor_)
+Ball::Ball(int posx,int posy, int posz,float r_, int noiseFactor_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_)
 {
     cout<<"newBall : "<<posx<<" "<<posy<<" "<<posz<<endl;
     position.x=posx;

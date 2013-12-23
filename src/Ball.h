@@ -9,7 +9,7 @@ class Ball
 public:
     Ball();
     virtual ~Ball();
-    Ball(int posx,int posy, int posz=0,float r_=5, float maxRadius_=50, float minRadius_=10, int nbCircles_=5, int noiseFactor_=100,int circleWidth_=5,int circleWidthFactor_=30);
+    Ball(int posx,int posy, int posz=0,float r_=5, int noiseFactor_=100,float maxRadius_=50, float minRadius_=10, int nbCircles_=5,int circleWidth_=5,int circleWidthFactor_=30);
     void fadeIn(float r);
     void fadeOut();
     void setPosition();
