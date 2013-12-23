@@ -2,19 +2,21 @@
 #define LINK_H
 #include "ofMain.h"
 #include "Ball.h"
-class Ball;//inclue une classe pour permettre la compilation, mais le compilateur le trouvera plus tars
+
+class Ball;//inclue une classe pour permettre la compilation, mais le compilateur le trouvera plus tard
 class Link
 {
     public:
-        Link(Ball ball1_, Ball ball2_);
+        Link(Ball &ball1_, Ball &ball2_);
         virtual ~Link();
         bool checkIfDead();
         void setIsDead(bool boolean);
-        Ball getBall(int i);
+        void getFirstBall(Ball & firstBall);
+        void getSecondBall(Ball & secondBall);
     protected:
     private:
-    Ball ball1;//ball connected to the link
-    Ball ball2;
+    Ball *ball1;//ball connected to the link
+    Ball *ball2;
     bool isDead;
 };
 

@@ -2,6 +2,7 @@
 #define BALL_H
 #include "ofMain.h"
 #include "Circle.h"
+#include "Link.h"
 class Link;
 class Ball
 {
@@ -16,6 +17,7 @@ public:
     void removeLinks();
     ofVec3f getPosition();
     bool checkIfDead();
+    float getRadius();
     void setRadius(float radius);
     void addCircle(int radius, int circleWidth);
     void setCircleWidthFactor(int factor);
@@ -23,6 +25,8 @@ public:
     void addConnectedLink(Link* link);
     bool linkExist(Ball testedBall);
     void setNoiseFactor(int nF);
+    Ball operator=(const Ball&);
+
 
 protected:
 private:

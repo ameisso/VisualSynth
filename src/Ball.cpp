@@ -27,7 +27,7 @@ Ball::~Ball()
     removeCircles();
     removeLinks();
 }
- void Ball::fadeIn(float radius)
+void Ball::fadeIn(float radius)
 {
     //ball fade in when created, make the radius and the opacity grow to the defined radius in parameter.
 }
@@ -41,7 +41,7 @@ void Ball::removeCircles()
 }
 void Ball::removeLinks()
 {
-for(vector< ofPtr<Link> >::iterator it = linksConnected.begin(); it != linksConnected.end(); ++it)
+    for(vector< ofPtr<Link> >::iterator it = linksConnected.begin(); it != linksConnected.end(); ++it)
     {
         (*it)->setIsDead(true);
     }
@@ -71,7 +71,7 @@ void Ball::setRadius(float radius)
 }
 void Ball::addCircle(int radius, int circleWidth)
 {
-    theCircles.add(new Circle(radius, circleWidth, position));
+    theCircles.push_back(ofPtr<Circle> (new Circle(radius, circleWidth, position)));
 }
 void Ball::setCircleWidthFactor(int factor)
 {
@@ -81,9 +81,9 @@ void Ball::setCircleWidth(int factor)
 {
     circleWidth=factor;
 }
-void addConnectedLink(Link link)
+void Ball::addConnectedLink(Link *link)
 {
-    linksConnected.add(link);
+    linksConnected.push_back(ofPtr<Link>(link));
 }
 
 
@@ -91,12 +91,11 @@ bool Ball::linkExist(Ball testedBall)
 {
     //function that test if the ball exist or not.
     bool test=false;
-    for (int i = linksConnected.size()-1; i >= 0; i--)
+
+    for(vector< ofPtr<Link> >::iterator it = linksConnected.begin(); it != linksConnected.end(); ++it)
     {
-        Link link=linksConnected.get(i);
-        Ball ball1=link.getBall(0);
-        Ball ball2=link.getBall(1);
-        if ((ball1==testedBall)||ball2==testedBall)
+        //TODO chercher dans linksConnected si un lien avec la testedBall existe ou non
+        if (true)
         {
             test=true;
             //println("ball1 :"+ball1+" "+" Ball2 :"+ball2);
@@ -109,3 +108,4 @@ void Ball::setNoiseFactor(int nF)
 {
     noiseFactor=nF;
 }
+

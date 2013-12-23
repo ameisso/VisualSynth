@@ -1,12 +1,15 @@
 #include "Link.h"
 
 
-Link::Link(Ball ball1_, Ball ball2_)
+Link::Link(Ball &ball1_, Ball &ball2_)
 {
-    ball1=ball1_;
-    ball2=ball2_;
-    ball1.addConnectedLink();
-    ball2.addConnectedLink(this);
+    ball1 =new Ball(0,0);
+    ball2 =new Ball(0,0);
+
+    ball1=&ball1_;
+    ball2=&ball2_;
+    ball1->addConnectedLink(this);
+    ball2->addConnectedLink(this);
     isDead=false;
 }
 Link::~Link()
@@ -21,8 +24,12 @@ void Link::setIsDead(bool boolean)
 {
     isDead=boolean;
 }
-Ball Link::getBall(int i)
+void Link::getFirstBall(Ball &firstBall)
 {
-    if(i==0)return ball1;
-    else if (i==1) return ball2;
+    //TODO retourner la ball1 si besoin
 }
+void Link::getSecondBall(Ball &secondBall)
+{
+    //TODO retourner la ball2 si besoin
+}
+
