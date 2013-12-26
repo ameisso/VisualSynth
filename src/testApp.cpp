@@ -3,22 +3,49 @@
 //--------------------------------------------------------------
 void testApp::setup()
 {
-    // load the texure
     ofSetWindowTitle("VisualSynth");
     cout<<"***********************VisualSynth******************************"<<endl;
     OscReceiver.setup(8000);
     profZ=1000; //a modifier, pourra être dans le fichier de config.
+
+    // image
+    texBall.loadImage("/home/nico/of_v0.8.0_linux_release/apps/myApps/CrampTacle/cerf.png");
+
+    // each ball has a plane
+    ballPlane.set(100, 100); // initials values, change at the first display
+    ballPlane.setPosition(200,200,10); //idem
+    ballPlane.mapTexCoords(0, 0, texBall.getWidth(), texBall.getHeight());
 }
 
 //--------------------------------------------------------------
 void testApp::update()
 {
+    ofBackground(50,50,255);
+
     receiveOscMessage();
 }
 
 //--------------------------------------------------------------
 void testApp::draw()
 {
+    ofSetHexColor(0xffffff);
+
+    // we display each ball
+    texBall.bind();
+    for (int i=0;i<(int)theBalls.size();i++) {
+        ballPlane.set((*theBalls[i]).getRadius(),(*theBalls[i]).getRadius());
+        ballPlane.setPosition((*theBalls[i]).getPosition().x, (*theBalls[i]).getPosition().y,10);
+        ballPlane.draw();
+    }
+    texBall.unbind();
+
+    // we display each ring from each ball
+    for (int i=0;i<(int)theBalls.size();i++) {
+        for (int k=0; k<(*theBalls[i]).getNbCircles();k++)
+        {
+            (*((*theBalls[i]).getTheCircles()[k])).getRing().draw();
+        }
+    }
 
 }
 //--------------------------------------------------------------
@@ -29,6 +56,12 @@ void testApp::keyPressed(int key)
     {
         cout<<"toggle fullscreen"<<endl;
         ofToggleFullscreen();
+    }
+    if (key == 32) //space to create a ring around the last ball
+    {
+        int ballCircleMargin = 10;
+        int ringWidth = 10;
+        (*theBalls.back()).addCircle((*theBalls.back()).getRadius()+ballCircleMargin,ringWidth);
     }
 }
 

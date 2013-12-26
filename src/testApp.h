@@ -35,4 +35,8 @@ class testApp : public ofBaseApp{
         ofxOscMessage OscReceivedMessage;
 
 
+        ofPlanePrimitive ballPlane;
+        ofPlanePrimitive circlePlane;
+		ofImage texBall;
+		ofImage texCircle;
 };
