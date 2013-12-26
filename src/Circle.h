@@ -9,11 +9,14 @@ public:
     void update(ofVec3f center_, int radius_, int circleWidth_);
     void setRadius(int radius_);
     int getRadius();
+    ofPath getRing();
+
 protected:
 private:
     int radius, circleWidth;
     ofVec3f center;
     int initialRadius;
+    ofPath ring;
 };
 
 #endif // CIRCLE_H

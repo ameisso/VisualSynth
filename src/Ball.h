@@ -12,6 +12,7 @@ public:
     Ball(int posx,int posy, int posz ,int synthNumber_,float r_=5, int noiseFactor_=100,float maxRadius_=50, float minRadius_=10, int nbCircles_=5,int circleWidth_=5,int circleWidthFactor_=30, float lifeSpeed=0.995);
     void update();
     void draw();
+
     void fadeIn(float r);
     void fadeOut();
     void setPosition();
@@ -29,6 +30,9 @@ public:
     void setNoiseFactor(int nF);
     Ball operator=(const Ball&);
     int getSynthNumber();
+    int getNbCircles();
+    vector<ofPtr<Circle> > getTheCircles();
+
 
 
 protected:

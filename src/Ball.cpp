@@ -64,6 +64,7 @@ void  Ball::fadeOut()
 void Ball::removeCircles()
 {
     theCircles.clear();
+    nbCircles = 0;
 }
 void Ball::removeLinks()
 {
@@ -97,7 +98,9 @@ void Ball::setRadius(float radius)
 }
 void Ball::addCircle(int radius, int circleWidth)
 {
-    theCircles.push_back(ofPtr<Circle> (new Circle(radius, circleWidth, position)));
+    int radiusIncrease = 30;
+    theCircles.push_back(ofPtr<Circle> (new Circle(radius + nbCircles*radiusIncrease, circleWidth, position)));
+    nbCircles ++;
 }
 void Ball::setCircleWidthFactor(int factor)
 {
@@ -139,3 +142,12 @@ int Ball::getSynthNumber()
     return synthNumber;
 }
 
+int Ball::getNbCircles()
+{
+    return nbCircles;
+}
+
+vector<ofPtr<Circle> > Ball::getTheCircles()
+{
+    return theCircles;
+}
