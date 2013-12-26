@@ -1,12 +1,13 @@
 #include "Ball.h"
 
+
 Ball::Ball()
 {
-    //ctor
+    //constructeur par défaut
 }
-Ball::Ball(int posx,int posy, int posz,float r_, int noiseFactor_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_)
+Ball::Ball(int posx,int posy,int synthNumber_, int posz,float r_, int noiseFactor_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_, float lifeSpeed_)
 {
-    cout<<"newBall : "<<posx<<" "<<posy<<" "<<posz<<endl;
+
     position.x=posx;
     position.y=posy;
     position.z=posz;
@@ -17,9 +18,33 @@ Ball::Ball(int posx,int posy, int posz,float r_, int noiseFactor_, float maxRadi
     noiseFactor=noiseFactor_;
     circleWidth=circleWidth_;
     circleWidthFactor=circleWidthFactor_;
-    isDead=false;
+    lifeSpeed=lifeSpeed_;
+    synthNumber=synthNumber_;
 
     fadeIn(r);
+    cout<<"newBall : "<<posx<<" "<<posy<<" "<<posz<<"synth "<<synthNumber<<endl;
+}
+void Ball::update()
+{
+    float sgn=ofRandom(1)-0.5;//On tire au sort le signe de la vibration
+    velocity.x+=sgn*ofNoise(velocity.x)*noiseFactor*0.01;
+    sgn=ofRandom(1)-0.5;
+    velocity.y+=sgn*ofNoise(velocity.y)*noiseFactor*0.01;
+    sgn=ofRandom(1)-0.5;
+    velocity.z+=sgn*ofNoise(velocity.z)*noiseFactor*0.01;
+    position+=velocity;
+    r*=lifeSpeed;
+    //si le rayon dépasse les bornes, on fade out puis on supprime
+    if(r<minRadius||r>maxRadius)
+    {
+        fadeOut();
+    }
+    //cout<<"updated"<<ofToString(position)<<endl;
+}
+void Ball::draw()
+{
+
+
 }
 
 Ball::~Ball()
@@ -30,10 +55,11 @@ Ball::~Ball()
 void Ball::fadeIn(float radius)
 {
     //ball fade in when created, make the radius and the opacity grow to the defined radius in parameter.
+    isDead=false;
 }
 void  Ball::fadeOut()
 {
-
+  isDead=true;
 }
 void Ball::removeCircles()
 {

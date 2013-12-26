@@ -7,6 +7,7 @@ void testApp::setup()
     ofSetWindowTitle("VisualSynth");
     cout<<"***********************VisualSynth******************************"<<endl;
     OscReceiver.setup(8000);
+    oscSender.setup("127.0.0.1",12000);
     profZ=1000; //a modifier, pourra être dans le fichier de config.
 }
 
@@ -14,6 +15,11 @@ void testApp::setup()
 void testApp::update()
 {
     receiveOscMessage();
+    for(vector< ofPtr<Ball> >::iterator it = theBalls.begin(); it != theBalls.end(); ++it)
+        {
+            (*it)->update();
+            sendOscInfos((*it));
+        }
 }
 
 //--------------------------------------------------------------
@@ -53,7 +59,7 @@ void testApp::mouseDragged(int x, int y, int button)
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button)
 {
-    theBalls.push_back(ofPtr<Ball> (new Ball(x,y)));
+    theBalls.push_back(ofPtr<Ball> (new Ball(x,y,0, attributeSynth())));
 }
 
 //--------------------------------------------------------------
@@ -94,23 +100,23 @@ void testApp::receiveOscMessage()
             float xVal=OscReceivedMessage.getArgAsFloat(0)*ofGetWidth();
             float yVal=OscReceivedMessage.getArgAsFloat(1)*ofGetHeight();
             cout<<xVal<<" "<<yVal<<endl;
-            theBalls.push_back(ofPtr<Ball> (new Ball (xVal,yVal)));
+            theBalls.push_back(ofPtr<Ball> (new Ball (xVal,yVal,0,attributeSynth())));
         }
         else if(OscReceivedMessage.getAddress()=="/pad/2")//deuxième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight())));
+            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0, attributeSynth())));
         }
         else if(OscReceivedMessage.getAddress()=="/pad/3")//troisième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight())));
+            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth())));
         }
         else if(OscReceivedMessage.getAddress()=="/pad/4")//quatrième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight())));
+            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth())));
         }
         else if(OscReceivedMessage.getAddress()=="/pad/5")//cinquième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight())));
+            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth())));
         }
         else if (OscReceivedMessage.getAddress()=="/1/multifader2/1")//durée de vie de la balle
         {
@@ -128,8 +134,42 @@ void testApp::receiveOscMessage()
             {
                 cout<<"I don't know this message "<<endl;
             }
-
     }
+}
+void testApp::sendOscInfos(ofPtr<Ball>& ballToSend)
+{
+    string address="radius";
+    float value=ballToSend->getRadius();
+    ofxOscMessage msgToSend = ofxOscMessage();
+    msgToSend.setAddress("test");
+    msgToSend.addFloatArg(value);
+    oscSender.sendMessage(msgToSend);
+    //cout<<"Sended : "<<value<<" @"<< address<<endl;
+}
+int testApp::attributeSynth()
+{
+    //!!! on ne pourra pas créer plus de balles que de synthés !
+    int j=ofRandom(nbSynthsForBalls);
+    for(int i=0;i<nbSynthsForBalls;i++)
+    {
+        if(synthsForBalls[j]==false)
+        {
+            synthsForBalls[j]=true;
+            break;
+        }
+        else
+        {
+            j=ofRandom(nbSynthsForBalls);
+        }
 
+        cout<<"j"<<j<<endl;
+    }
+    cout<<"[";
+    for(int i=0;i<nbSynthsForBalls;i++)
+    {
+        cout<<i<<ofToString(synthsForBalls[i])<<",";
+    }
+    cout<<"]"<<endl;;
 
+    return j;
 }

@@ -3,8 +3,8 @@
 
 Link::Link(Ball &ball1_, Ball &ball2_)
 {
-    ball1 =new Ball(0,0);
-    ball2 =new Ball(0,0);
+    ball1 =new Ball();
+    ball2 =new Ball();
 
     ball1=&ball1_;
     ball2=&ball2_;
