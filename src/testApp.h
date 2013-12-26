@@ -1,12 +1,11 @@
 #pragma once
 #define nbSynthsForBalls 10//nombre de synthétiseurs dans le reaktor attribué aux balles.
 #include "ofMain.h"
-//#include "ofAddons.h"
 #include "ofxOsc.h"
 #include "Ball.h"
 #include "Circle.h"
 #include "Link.h"
-#include <list>
+
 class testApp : public ofBaseApp{
 
 	public:
@@ -27,8 +26,9 @@ class testApp : public ofBaseApp{
 		void sendOscInfos(ofPtr<Ball>&ballToSend);
         int attributeSynth();//fonction qui attribue un synthétiseur à une balle.
     private :
-        bool synthsForBalls[nbSynthsForBalls]={true};//tableau qui dit si un synthétiseur est attribué à une balle ou non.
-        //!!!!passer en list list <bool>synthsForBalls;
+        //bool synthsForBalls[nbSynthsForBalls]={true};//tableau qui dit si un synthétiseur est attribué à une balle ou non.
+        //passer en list
+        vector <bool>synthsForBalls;
         int profZ; //profondeur en z de la fenetre (jusqu'à ou on peut créer des balles en profondeur
         int lifeSpeed;
         int ballNoiseFactor; //détermine la vitesse de déplacement des balles.

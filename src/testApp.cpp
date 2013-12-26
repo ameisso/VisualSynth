@@ -9,6 +9,10 @@ void testApp::setup()
     OscReceiver.setup(8000);
     oscSender.setup("127.0.0.1",12000);
     profZ=1000; //a modifier, pourra être dans le fichier de config.
+    for (int i=0; i<nbSynthsForBalls;i++)
+    {
+        synthsForBalls.push_back(true);
+    }
 }
 
 //--------------------------------------------------------------
@@ -59,7 +63,7 @@ void testApp::mouseDragged(int x, int y, int button)
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button)
 {
-    theBalls.push_back(ofPtr<Ball> (new Ball(x,y,0, attributeSynth())));
+    theBalls.push_back(ofPtr<Ball> (new Ball(x,y,0,attributeSynth())));
 }
 
 //--------------------------------------------------------------
@@ -136,40 +140,35 @@ void testApp::receiveOscMessage()
             }
     }
 }
+//fonction qui va envoyer par osc tout les paramètres de la balle.
 void testApp::sendOscInfos(ofPtr<Ball>& ballToSend)
 {
-    string address="radius";
-    float value=ballToSend->getRadius();
+    int synthNumber=ballToSend->getSynthNumber();
+    string address="/ball"+ofToString(synthNumber)+"/radius";
     ofxOscMessage msgToSend = ofxOscMessage();
-    msgToSend.setAddress("test");
-    msgToSend.addFloatArg(value);
+    msgToSend.setAddress(address);
+    //-----
+    msgToSend.addFloatArg(ballToSend->getPosition().x);
+    msgToSend.addFloatArg(ballToSend->getPosition().y);
+    msgToSend.addFloatArg(ballToSend->getPosition().z);
+    msgToSend.addFloatArg(ballToSend->getRadius());
+    //-----
+    //ajouter ici les autre paramètres pour envoyer toutes les infos dans une seule trame ...après tout l'osc c'est fait pour ca.
     oscSender.sendMessage(msgToSend);
-    //cout<<"Sended : "<<value<<" @"<< address<<endl;
+   //cout<<"Sended : "<<value<<" @"<< address<<endl;
 }
 int testApp::attributeSynth()
 {
     //!!! on ne pourra pas créer plus de balles que de synthés !
-    int j=ofRandom(nbSynthsForBalls);
-    for(int i=0;i<nbSynthsForBalls;i++)
+    int i;
+    while(synthsForBalls[i]==false)
     {
-        if(synthsForBalls[j]==false)
+        if(synthsForBalls[i]==true)
         {
-            synthsForBalls[j]=true;
+            synthsForBalls[i]=false;
             break;
         }
-        else
-        {
-            j=ofRandom(nbSynthsForBalls);
-        }
-
-        cout<<"j"<<j<<endl;
+        i=ofRandom(nbSynthsForBalls);
     }
-    cout<<"[";
-    for(int i=0;i<nbSynthsForBalls;i++)
-    {
-        cout<<i<<ofToString(synthsForBalls[i])<<",";
-    }
-    cout<<"]"<<endl;;
-
-    return j;
+    return i;
 }

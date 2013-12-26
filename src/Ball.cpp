@@ -5,7 +5,7 @@ Ball::Ball()
 {
     //constructeur par défaut
 }
-Ball::Ball(int posx,int posy,int synthNumber_, int posz,float r_, int noiseFactor_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_, float lifeSpeed_)
+Ball::Ball(int posx,int posy,int posz,int synthNumber_,float r_, int noiseFactor_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_, float lifeSpeed_)
 {
 
     position.x=posx;
@@ -22,7 +22,7 @@ Ball::Ball(int posx,int posy,int synthNumber_, int posz,float r_, int noiseFacto
     synthNumber=synthNumber_;
 
     fadeIn(r);
-    cout<<"newBall : "<<posx<<" "<<posy<<" "<<posz<<"synth "<<synthNumber<<endl;
+    cout<<"newBall : ["<<posx<<","<<posy<<","<<posz<<"] synth :"<<synthNumber<<endl;
 }
 void Ball::update()
 {
@@ -133,5 +133,9 @@ bool Ball::linkExist(Ball testedBall)
 void Ball::setNoiseFactor(int nF)
 {
     noiseFactor=nF;
+}
+int Ball::getSynthNumber()
+{
+    return synthNumber;
 }
 

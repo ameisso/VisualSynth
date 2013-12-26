@@ -18,6 +18,7 @@ class Link
     Ball *ball1;//ball connected to the link
     Ball *ball2;
     bool isDead;
+    void toString();
 };
 
 #endif // LINK_H
