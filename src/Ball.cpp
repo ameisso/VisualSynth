@@ -7,7 +7,7 @@ Ball::Ball()
 
 Ball::Ball(int posx,int posy,int posz,int synthNumber_,string  pathToImage_,float r_, int noiseFactor_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_, float lifeSpeed_)
 {
-     cout<<"newBall";
+     cout<<"newBall ";
     position.x=posx;
     position.y=posy;
     position.z=posz;
