@@ -4,7 +4,11 @@ Ball::Ball()
 {
     //ctor
 }
+<<<<<<< HEAD
 Ball::Ball(int posx,int posy, int posz,float r_, int noiseFactor_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_)
+=======
+Ball::Ball(int posx,int posy,int posz,int synthNumber_,float r_, int noiseFactor_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_, float lifeSpeed_)
+>>>>>>> 7692974e9b1471394e40db354ecbb3ae68cc3350
 {
     cout<<"newBall : "<<posx<<" "<<posy<<" "<<posz<<endl;
     position.x=posx;
@@ -20,6 +24,33 @@ Ball::Ball(int posx,int posy, int posz,float r_, int noiseFactor_, float maxRadi
     isDead=false;
 
     fadeIn(r);
+<<<<<<< HEAD
+=======
+    cout<<"newBall : ["<<posx<<","<<posy<<","<<posz<<"] synth :"<<synthNumber<<endl;
+}
+void Ball::update()
+{
+    cout<<"debut update"<<endl;
+    float sgn=ofRandom(1)-0.5;//On tire au sort le signe de la vibration
+    velocity.x+=sgn*ofNoise(velocity.x)*noiseFactor*0.01;
+    sgn=ofRandom(1)-0.5;
+    velocity.y+=sgn*ofNoise(velocity.y)*noiseFactor*0.01;
+    sgn=ofRandom(1)-0.5;
+    velocity.z+=sgn*ofNoise(velocity.z)*noiseFactor*0.01;
+    position+=velocity;
+    r*=lifeSpeed;
+    //si le rayon dépasse les bornes, on fade out puis on supprime
+    if(r<minRadius||r>maxRadius)
+    {
+        fadeOut();
+    }
+    cout<<"endUpdate"<<endl;
+    //cout<<"updated"<<ofToString(position)<<endl;
+}
+void Ball::draw()
+{
+
+>>>>>>> 7692974e9b1471394e40db354ecbb3ae68cc3350
 }
 
 Ball::~Ball()
@@ -110,6 +141,10 @@ bool Ball::linkExist(Ball testedBall)
 void Ball::setNoiseFactor(int nF)
 {
     noiseFactor=nF;
+}
+int Ball::getSynthNumber()
+{
+    return synthNumber;
 }
 
 int Ball::getNbCircles()

@@ -32,4 +32,7 @@ void Link::getSecondBall(Ball &secondBall)
 {
     //TODO retourner la ball2 si besoin
 }
-
+void Link::toString()
+{
+    cout<<"Link :"<<ball1<<","<<ball2<<endl;
+}

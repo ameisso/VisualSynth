@@ -6,10 +6,17 @@ void testApp::setup()
     ofSetWindowTitle("VisualSynth");
     cout<<"***********************VisualSynth******************************"<<endl;
     OscReceiver.setup(8000);
+    readXmlSetup();
+    OscReceiver.setup(oscReceivePort);
+    oscSender.setup(oscSendAddress,oscSendPort);
     profZ=1000; //a modifier, pourra être dans le fichier de config.
+    for (int i=0; i<nbSynthsForBalls;i++)
+    {
+        synthsForBalls.push_back(true);
+    }
 
     // image
-    texBall.loadImage("cerf.png");
+    texBall.loadImage(pathToImages);
 
     // each ball has a plane
     ballPlane.set(100, 100); // initials values, change at the first display
@@ -23,11 +30,20 @@ void testApp::update()
     ofBackground(50,50,255);
 
     receiveOscMessage();
+
+    for(vector< ofPtr<Ball> >::iterator it = theBalls.begin(); it != theBalls.end(); ++it)
+        {
+            (*it)->update();
+            sendOscInfos((*it));
+        }
+        cout<<"sortie update global"<<endl;
+
 }
 
 //--------------------------------------------------------------
 void testApp::draw()
 {
+    cout<<"début draw global"<<endl;
     ofSetHexColor(0xffffff);
 
     // we display each ball
@@ -48,8 +64,19 @@ void testApp::draw()
     }
     texBall.unbind();
 
+
     // we display each ring from each ball
 
+    for (int i=0;i<(int)theBalls.size();i++) {
+        for (int k=0; k<(*theBalls[i]).getNbCircles();k++)
+        {
+            cout<<"dans le for  "<<i<<endl;
+            (*((*theBalls[i]).getTheCircles()[k])).getRing().draw();
+            cout<< "après le get"<<endl;
+        }
+            cout<<"sortire premier for "<<endl;
+    }
+   cout<<"end draw global"<<endl;
 }
 //--------------------------------------------------------------
 void testApp::keyPressed(int key)
@@ -89,7 +116,7 @@ void testApp::mouseDragged(int x, int y, int button)
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button)
 {
-    theBalls.push_back(ofPtr<Ball> (new Ball(x,y)));
+    theBalls.push_back(ofPtr<Ball> (new Ball(x,y,0,attributeSynth())));
 }
 
 //--------------------------------------------------------------
@@ -164,8 +191,80 @@ void testApp::receiveOscMessage()
             {
                 cout<<"I don't know this message "<<endl;
             }
-
+    }
+}
+//fonction qui va envoyer par osc tout les paramètres de la balle.
+void testApp::sendOscInfos(ofPtr<Ball>& ballToSend)
+{
+    /*int synthNumber=ballToSend->getSynthNumber();
+    string address="/ball"+ofToString(synthNumber)+"/radius";
+    ofxOscMessage msgToSend = ofxOscMessage();
+    msgToSend.setAddress(address);
+    //-----
+    msgToSend.addFloatArg(ballToSend->getPosition().x);
+    msgToSend.addFloatArg(ballToSend->getPosition().y);
+    msgToSend.addFloatArg(ballToSend->getPosition().z);
+    msgToSend.addFloatArg(ballToSend->getRadius());
+    //-----
+    //ajouter ici les autre paramètres pour envoyer toutes les infos dans une seule trame ...après tout l'osc c'est fait pour ca.
+    oscSender.sendMessage(msgToSend);
+   //cout<<"Sended : "<<value<<" @"<< address<<endl;*/
+}
+int testApp::attributeSynth()
+{
+    //!!! on ne pourra pas créer plus de balles que de synthés !
+    int i;
+    while(synthsForBalls[i]==false)
+    {
+        if(synthsForBalls[i]==true)
+        {
+            synthsForBalls[i]=false;
+            break;
+        }
+        i=ofRandom(nbSynthsForBalls);
+    }
+    return i;
+}
+void testApp::readXmlSetup()
+{
+    ofFile file;
+    //TODO block the process if the file is not there or is corrupted....
+    //Test the file existance throw an error if not
+    if(file.doesFileExist("config.xml",true)==true)
+    {
+        cout<<"config.xml found"<<endl;
+        cout<<"*****************************************************************"<<endl<<endl;
+    }
+    else
+    {
+        cout<<"no config.xml file, default receive port : 8000"<<endl;
+        oscReceivePort=8000;
+        OscReceiver.setup(oscReceivePort);
+        return;
     }
 
+    file.open("config.xml");
+    ofBuffer buffer=file.readToBuffer();
+    ofXml configFile;
+    configFile.loadFromBuffer(buffer.getText());
+    configFile.setTo("osc");
+    oscReceivePort=configFile.getIntValue("receivePort");
+    cout<<"receivePort :"<<oscReceivePort<<endl;
+    oscSendPort=configFile.getIntValue("sendPort");
+    cout<<"sendPort :"<<oscSendPort<<endl;
+    oscSendAddress=configFile.getValue("sendAddress");
+    cout<<"sendAddress :"<<oscSendAddress<<endl;
+    configFile.setTo("../screen"); // go up and then down
+    profZ=configFile.getIntValue("profondeurZ");
+    configFile.setTo("../synth"); // go up and then down
+    nbSynthsForBalls=configFile.getIntValue("nbSynthsForBalls");
+    configFile.setTo("../textures");
+    pathToImages=configFile.getValue("path");
 
+
+    file.close();
+    buffer.clear();
+    configFile.clear();
+    cout<<endl<<"*****************************************************************"<<endl;
+    cout<<"XML files read, objects created" <<endl;
 }
