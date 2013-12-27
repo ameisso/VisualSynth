@@ -14,14 +14,6 @@ void testApp::setup()
     {
         synthsForBalls.push_back(true);
     }
-
-    // image
-    texBall.loadImage(pathToImages);
-
-    // each ball has a plane
-    ballPlane.set(100, 100); // initials values, change at the first display
-    ballPlane.setPosition(200,200,10); //idem
-    ballPlane.mapTexCoords(0, 0, texBall.getWidth(), texBall.getHeight());
 }
 
 //--------------------------------------------------------------
@@ -36,47 +28,18 @@ void testApp::update()
             (*it)->update();
             sendOscInfos((*it));
         }
-        cout<<"sortie update global"<<endl;
-
 }
 
 //--------------------------------------------------------------
 void testApp::draw()
 {
-    cout<<"début draw global"<<endl;
     ofSetHexColor(0xffffff);
-
+    for(vector< ofPtr<Ball> >::iterator it = theBalls.begin(); it != theBalls.end(); ++it)
+        {
+            (*it)->draw();
+        }
     // we display each ball
 
-    for (int i=0;i<(int)theBalls.size();i++) {
-        for (int k=0; k<(*theBalls[i]).getNbCircles();k++)
-        {
-            (*((*theBalls[i]).getTheCircles()[k])).getRing().draw();
-        }
-    }
-
-
-    texBall.bind();
-    for (int i=0;i<(int)theBalls.size();i++) {
-        ballPlane.set((*theBalls[i]).getRadius(),(*theBalls[i]).getRadius());
-        ballPlane.setPosition((*theBalls[i]).getPosition().x, (*theBalls[i]).getPosition().y,10);
-        ballPlane.draw();
-    }
-    texBall.unbind();
-
-
-    // we display each ring from each ball
-
-    for (int i=0;i<(int)theBalls.size();i++) {
-        for (int k=0; k<(*theBalls[i]).getNbCircles();k++)
-        {
-            cout<<"dans le for  "<<i<<endl;
-            (*((*theBalls[i]).getTheCircles()[k])).getRing().draw();
-            cout<< "après le get"<<endl;
-        }
-            cout<<"sortire premier for "<<endl;
-    }
-   cout<<"end draw global"<<endl;
 }
 //--------------------------------------------------------------
 void testApp::keyPressed(int key)
@@ -116,7 +79,9 @@ void testApp::mouseDragged(int x, int y, int button)
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button)
 {
-    theBalls.push_back(ofPtr<Ball> (new Ball(x,y,0,attributeSynth())));
+    int synthNbr=attributeSynth();
+    cout<<"click "<<synthNbr<<endl;
+    theBalls.push_back(ofPtr<Ball> (new Ball(x,y,0,synthNbr,pathToImages)));
 }
 
 //--------------------------------------------------------------
@@ -157,23 +122,23 @@ void testApp::receiveOscMessage()
             float xVal=OscReceivedMessage.getArgAsFloat(0)*ofGetWidth();
             float yVal=OscReceivedMessage.getArgAsFloat(1)*ofGetHeight();
             cout<<xVal<<" "<<yVal<<endl;
-            theBalls.push_back(ofPtr<Ball> (new Ball (xVal,yVal,0,attributeSynth())));
+            theBalls.push_back(ofPtr<Ball> (new Ball (xVal,yVal,0,attributeSynth(),pathToImages)));
         }
         else if(OscReceivedMessage.getAddress()=="/pad/2")//deuxième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth())));
+            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
         }
         else if(OscReceivedMessage.getAddress()=="/pad/3")//troisième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth())));
+            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
         }
         else if(OscReceivedMessage.getAddress()=="/pad/4")//quatrième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth())));
+            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
         }
         else if(OscReceivedMessage.getAddress()=="/pad/5")//cinquième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth())));
+            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
         }
         else if (OscReceivedMessage.getAddress()=="/1/multifader2/1")//durée de vie de la balle
         {
@@ -196,7 +161,7 @@ void testApp::receiveOscMessage()
 //fonction qui va envoyer par osc tout les paramètres de la balle.
 void testApp::sendOscInfos(ofPtr<Ball>& ballToSend)
 {
-    /*int synthNumber=ballToSend->getSynthNumber();
+    int synthNumber=ballToSend->getSynthNumber();
     string address="/ball"+ofToString(synthNumber)+"/radius";
     ofxOscMessage msgToSend = ofxOscMessage();
     msgToSend.setAddress(address);
@@ -208,12 +173,12 @@ void testApp::sendOscInfos(ofPtr<Ball>& ballToSend)
     //-----
     //ajouter ici les autre paramètres pour envoyer toutes les infos dans une seule trame ...après tout l'osc c'est fait pour ca.
     oscSender.sendMessage(msgToSend);
-   //cout<<"Sended : "<<value<<" @"<< address<<endl;*/
+   //cout<<"Sended : "<<value<<" @"<< address<<endl;
 }
 int testApp::attributeSynth()
 {
     //!!! on ne pourra pas créer plus de balles que de synthés !
-    int i;
+    int i=ofRandom(nbSynthsForBalls);
     while(synthsForBalls[i]==false)
     {
         if(synthsForBalls[i]==true)
@@ -252,15 +217,17 @@ void testApp::readXmlSetup()
     cout<<"receivePort :"<<oscReceivePort<<endl;
     oscSendPort=configFile.getIntValue("sendPort");
     cout<<"sendPort :"<<oscSendPort<<endl;
-    oscSendAddress=configFile.getValue("sendAddress");
+    oscSendAddress=configFile.getValue("sendIp");
     cout<<"sendAddress :"<<oscSendAddress<<endl;
     configFile.setTo("../screen"); // go up and then down
     profZ=configFile.getIntValue("profondeurZ");
+    cout<<"profZ :"<<profZ<<endl;
     configFile.setTo("../synth"); // go up and then down
     nbSynthsForBalls=configFile.getIntValue("nbSynthsForBalls");
+    cout<<"nbSynthsForBalls :"<<nbSynthsForBalls<<endl;
     configFile.setTo("../textures");
     pathToImages=configFile.getValue("path");
-
+    cout<<"path to Images :"<<pathToImages<<endl;
 
     file.close();
     buffer.clear();

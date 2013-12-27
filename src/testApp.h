@@ -35,19 +35,13 @@ class testApp : public ofBaseApp{
         string pathToImages;
         string imageName;
 		// vector to store all balls
-		vector < ofPtr<Ball> >  theBalls;
+		vector < ofPtr<Ball> > theBalls;
 		vector < ofPtr<Link> > theLinks;
         //OSC
         ofxOscReceiver OscReceiver;
         ofxOscMessage OscReceivedMessage;
-
         ofxOscSender oscSender;
         int oscReceivePort;
         int oscSendPort;
         string oscSendAddress;
-
-        ofPlanePrimitive ballPlane;
-        ofPlanePrimitive circlePlane;
-		ofImage texBall;
-		ofImage texCircle;
 };

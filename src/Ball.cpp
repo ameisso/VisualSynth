@@ -5,12 +5,13 @@ Ball::Ball()
     //ctor
 }
 
-Ball::Ball(int posx,int posy,int posz,int synthNumber_,float r_, int noiseFactor_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_, float lifeSpeed_)
+Ball::Ball(int posx,int posy,int posz,int synthNumber_,string  pathToImage_,float r_, int noiseFactor_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_, float lifeSpeed_)
 {
-    cout<<"newBall : "<<posx<<" "<<posy<<" "<<posz<<endl;
+     cout<<"newBall";
     position.x=posx;
     position.y=posy;
     position.z=posz;
+    pathToImage=pathToImage_;
     r=r_; //ball radius
     minRadius=minRadius_;
     maxRadius=maxRadius_;
@@ -20,9 +21,19 @@ Ball::Ball(int posx,int posy,int posz,int synthNumber_,float r_, int noiseFactor
     circleWidthFactor=circleWidthFactor_;
     isDead=false;
     lifeSpeed=lifeSpeed_;
-    fadeIn(r);
+    synthNumber=synthNumber_;
 
-    cout<<"newBall : ["<<posx<<","<<posy<<","<<posz<<"] synth :"<<synthNumber<<endl;
+    // image
+    texBall.loadImage(pathToImage);
+
+    // each ball has a plane
+    ballPlane.set(100, 100); // initials values, change at the first display
+    ballPlane.setPosition(200,200,10); //idem
+    ballPlane.mapTexCoords(0, 0, texBall.getWidth(), texBall.getHeight());
+
+
+    fadeIn(r);
+    cout<<" : ["<<posx<<","<<posy<<","<<posz<<"] synth :"<<synthNumber<<endl;
 }
 void Ball::update()
 {
@@ -45,6 +56,24 @@ void Ball::update()
 void Ball::draw()
 {
 
+
+    for(vector< ofPtr<Circle> >::iterator it = theCircles.begin(); it != theCircles.end(); ++it)
+    {
+        {
+            (*it)->getRing().draw();
+        }
+    }
+    texBall.bind();
+    ballPlane.set(r,r);
+    ballPlane.setPosition(position.x, position.y,10);
+    ballPlane.draw();
+    texBall.unbind();
+    // we display each ring from each ball
+
+    for(vector< ofPtr<Circle> >::iterator it = theCircles.begin(); it != theCircles.end(); ++it)
+    {
+        (*it)->getRing().draw();
+    }
 }
 
 Ball::~Ball()

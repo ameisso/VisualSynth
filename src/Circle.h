@@ -17,6 +17,9 @@ private:
     ofVec3f center;
     int initialRadius;
     ofPath ring;
+    //openGL
+    ofPlanePrimitive circlePlane;
+    ofImage texCircle;
 };
 
 #endif // CIRCLE_H
