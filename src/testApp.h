@@ -1,5 +1,5 @@
 #pragma once
-#define nbSynthsForBalls 10//nombre de synthétiseurs dans le reaktor attribué aux balles.
+//#define nbSynthsForBalls 10//nombre de synthétiseurs dans le reaktor attribué aux balles.
 #include "ofMain.h"
 #include "ofxOsc.h"
 #include "Ball.h"
@@ -25,6 +25,7 @@ class testApp : public ofBaseApp{
 		void receiveOscMessage();
 		void sendOscInfos(ofPtr<Ball>&ballToSend);
         int attributeSynth();//fonction qui attribue un synthétiseur à une balle.
+        void readXmlSetup();
     private :
         //bool synthsForBalls[nbSynthsForBalls]={true};//tableau qui dit si un synthétiseur est attribué à une balle ou non.
         //passer en list
@@ -33,17 +34,22 @@ class testApp : public ofBaseApp{
         int lifeSpeed;
         int ballNoiseFactor; //détermine la vitesse de déplacement des balles.
         float zPos; //position en z de la balle.
+        int nbSynthsForBalls;
+        string pathToImages;
+        string imageName;
 		// vector to store all balls
 		vector < ofPtr<Ball> >  theBalls;
+		vector < ofPtr<Link> > theLinks;
         //OSC
         ofxOscReceiver OscReceiver;
         ofxOscMessage OscReceivedMessage;
-
         ofxOscSender oscSender;
+        int oscReceivePort;
+        int oscSendPort;
+        string oscSendAddress;
 
         ofPlanePrimitive ballPlane;
         ofPlanePrimitive circlePlane;
 		ofImage texBall;
 		ofImage texCircle;
-
 };

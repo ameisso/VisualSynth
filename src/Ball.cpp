@@ -26,6 +26,7 @@ Ball::Ball(int posx,int posy,int posz,int synthNumber_,float r_, int noiseFactor
 }
 void Ball::update()
 {
+    cout<<"debut update"<<endl;
     float sgn=ofRandom(1)-0.5;//On tire au sort le signe de la vibration
     velocity.x+=sgn*ofNoise(velocity.x)*noiseFactor*0.01;
     sgn=ofRandom(1)-0.5;
@@ -39,11 +40,11 @@ void Ball::update()
     {
         fadeOut();
     }
+    cout<<"endUpdate"<<endl;
     //cout<<"updated"<<ofToString(position)<<endl;
 }
 void Ball::draw()
 {
-
 
 }
 

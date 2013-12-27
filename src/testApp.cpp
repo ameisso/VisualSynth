@@ -5,8 +5,9 @@ void testApp::setup()
 {
     ofSetWindowTitle("VisualSynth");
     cout<<"***********************VisualSynth******************************"<<endl;
-    OscReceiver.setup(8000);
-    oscSender.setup("127.0.0.1",12000);
+    readXmlSetup();
+    OscReceiver.setup(oscReceivePort);
+    oscSender.setup(oscSendAddress,oscSendPort);
     profZ=1000; //a modifier, pourra être dans le fichier de config.
     for (int i=0; i<nbSynthsForBalls;i++)
     {
@@ -14,7 +15,7 @@ void testApp::setup()
     }
 
     // image
-    texBall.loadImage("/home/nico/of_v0.8.0_linux_release/apps/myApps/CrampTacle/cerf.png");
+    texBall.loadImage(pathToImages);
 
     // each ball has a plane
     ballPlane.set(100, 100); // initials values, change at the first display
@@ -33,11 +34,14 @@ void testApp::update()
             (*it)->update();
             sendOscInfos((*it));
         }
+        cout<<"sortie update global"<<endl;
+
 }
 
 //--------------------------------------------------------------
 void testApp::draw()
 {
+    cout<<"début draw global"<<endl;
     ofSetHexColor(0xffffff);
 
     // we display each ball
@@ -49,14 +53,18 @@ void testApp::draw()
     }
     texBall.unbind();
 
+
     // we display each ring from each ball
     for (int i=0;i<(int)theBalls.size();i++) {
         for (int k=0; k<(*theBalls[i]).getNbCircles();k++)
         {
+            cout<<"dans le for  "<<i<<endl;
             (*((*theBalls[i]).getTheCircles()[k])).getRing().draw();
+            cout<< "après le get"<<endl;
         }
+            cout<<"sortire premier for "<<endl;
     }
-
+   cout<<"end draw global"<<endl;
 }
 //--------------------------------------------------------------
 void testApp::keyPressed(int key)
@@ -176,7 +184,7 @@ void testApp::receiveOscMessage()
 //fonction qui va envoyer par osc tout les paramètres de la balle.
 void testApp::sendOscInfos(ofPtr<Ball>& ballToSend)
 {
-    int synthNumber=ballToSend->getSynthNumber();
+    /*int synthNumber=ballToSend->getSynthNumber();
     string address="/ball"+ofToString(synthNumber)+"/radius";
     ofxOscMessage msgToSend = ofxOscMessage();
     msgToSend.setAddress(address);
@@ -188,7 +196,7 @@ void testApp::sendOscInfos(ofPtr<Ball>& ballToSend)
     //-----
     //ajouter ici les autre paramètres pour envoyer toutes les infos dans une seule trame ...après tout l'osc c'est fait pour ca.
     oscSender.sendMessage(msgToSend);
-   //cout<<"Sended : "<<value<<" @"<< address<<endl;
+   //cout<<"Sended : "<<value<<" @"<< address<<endl;*/
 }
 int testApp::attributeSynth()
 {
@@ -204,4 +212,47 @@ int testApp::attributeSynth()
         i=ofRandom(nbSynthsForBalls);
     }
     return i;
+}
+void testApp::readXmlSetup()
+{
+    ofFile file;
+    //TODO block the process if the file is not there or is corrupted....
+    //Test the file existance throw an error if not
+    if(file.doesFileExist("config.xml",true)==true)
+    {
+        cout<<"config.xml found"<<endl;
+        cout<<"*****************************************************************"<<endl<<endl;
+    }
+    else
+    {
+        cout<<"no config.xml file, default receive port : 8000"<<endl;
+        oscReceivePort=8000;
+        OscReceiver.setup(oscReceivePort);
+        return;
+    }
+
+    file.open("config.xml");
+    ofBuffer buffer=file.readToBuffer();
+    ofXml configFile;
+    configFile.loadFromBuffer(buffer.getText());
+    configFile.setTo("osc");
+    oscReceivePort=configFile.getIntValue("receivePort");
+    cout<<"receivePort :"<<oscReceivePort<<endl;
+    oscSendPort=configFile.getIntValue("sendPort");
+    cout<<"sendPort :"<<oscSendPort<<endl;
+    oscSendAddress=configFile.getValue("sendAddress");
+    cout<<"sendAddress :"<<oscSendAddress<<endl;
+    configFile.setTo("../screen"); // go up and then down
+    profZ=configFile.getIntValue("profondeurZ");
+    configFile.setTo("../synth"); // go up and then down
+    nbSynthsForBalls=configFile.getIntValue("nbSynthsForBalls");
+    configFile.setTo("../textures");
+    pathToImages=configFile.getValue("path");
+
+
+    file.close();
+    buffer.clear();
+    configFile.clear();
+    cout<<endl<<"*****************************************************************"<<endl;
+    cout<<"XML files read, objects created" <<endl;
 }
