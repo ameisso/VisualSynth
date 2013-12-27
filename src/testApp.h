@@ -22,8 +22,7 @@ class testApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		void receiveOscMessage();
     private :
-        //bool synthsForBalls[nbSynthsForBalls]={true};//tableau qui dit si un synthétiseur est attribué à une balle ou non.
-        //passer en list
+
         vector <bool>synthsForBalls;
 		void sendOscInfos(ofPtr<Ball>&ballToSend);
         int attributeSynth();//fonction qui attribue un synthétiseur à une balle.

@@ -157,23 +157,23 @@ void testApp::receiveOscMessage()
             float xVal=OscReceivedMessage.getArgAsFloat(0)*ofGetWidth();
             float yVal=OscReceivedMessage.getArgAsFloat(1)*ofGetHeight();
             cout<<xVal<<" "<<yVal<<endl;
-            theBalls.push_back(ofPtr<Ball> (new Ball (xVal,yVal)));
+            theBalls.push_back(ofPtr<Ball> (new Ball (xVal,yVal,0,attributeSynth())));
         }
         else if(OscReceivedMessage.getAddress()=="/pad/2")//deuxième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight())));
+            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth())));
         }
         else if(OscReceivedMessage.getAddress()=="/pad/3")//troisième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight())));
+            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth())));
         }
         else if(OscReceivedMessage.getAddress()=="/pad/4")//quatrième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight())));
+            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth())));
         }
         else if(OscReceivedMessage.getAddress()=="/pad/5")//cinquième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight())));
+            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth())));
         }
         else if (OscReceivedMessage.getAddress()=="/1/multifader2/1")//durée de vie de la balle
         {

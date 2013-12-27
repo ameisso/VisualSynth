@@ -4,11 +4,8 @@ Ball::Ball()
 {
     //ctor
 }
-<<<<<<< HEAD
-Ball::Ball(int posx,int posy, int posz,float r_, int noiseFactor_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_)
-=======
+
 Ball::Ball(int posx,int posy,int posz,int synthNumber_,float r_, int noiseFactor_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_, float lifeSpeed_)
->>>>>>> 7692974e9b1471394e40db354ecbb3ae68cc3350
 {
     cout<<"newBall : "<<posx<<" "<<posy<<" "<<posz<<endl;
     position.x=posx;
@@ -22,15 +19,14 @@ Ball::Ball(int posx,int posy,int posz,int synthNumber_,float r_, int noiseFactor
     circleWidth=circleWidth_;
     circleWidthFactor=circleWidthFactor_;
     isDead=false;
-
+    lifeSpeed=lifeSpeed_;
     fadeIn(r);
-<<<<<<< HEAD
-=======
+
     cout<<"newBall : ["<<posx<<","<<posy<<","<<posz<<"] synth :"<<synthNumber<<endl;
 }
 void Ball::update()
 {
-    cout<<"debut update"<<endl;
+
     float sgn=ofRandom(1)-0.5;//On tire au sort le signe de la vibration
     velocity.x+=sgn*ofNoise(velocity.x)*noiseFactor*0.01;
     sgn=ofRandom(1)-0.5;
@@ -44,13 +40,11 @@ void Ball::update()
     {
         fadeOut();
     }
-    cout<<"endUpdate"<<endl;
-    //cout<<"updated"<<ofToString(position)<<endl;
+
 }
 void Ball::draw()
 {
 
->>>>>>> 7692974e9b1471394e40db354ecbb3ae68cc3350
 }
 
 Ball::~Ball()
