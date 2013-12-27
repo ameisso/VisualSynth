@@ -5,7 +5,7 @@ Circle::Circle(int radius_, int circleWidth_, ofVec3f center_)
     circleWidth=circleWidth_;
     center=center_;
 
-    ofPoint p(center.x,center.y);
+    ofPoint p(center.x,center.y,1);
     ring.circle(p,radius+circleWidth/2);
     ring.circle(p,radius-circleWidth/2);
 	ring.close();

@@ -9,7 +9,7 @@ void testApp::setup()
     profZ=1000; //a modifier, pourra être dans le fichier de config.
 
     // image
-    texBall.loadImage("/home/nico/of_v0.8.0_linux_release/apps/myApps/CrampTacle/cerf.png");
+    texBall.loadImage("cerf.png");
 
     // each ball has a plane
     ballPlane.set(100, 100); // initials values, change at the first display
@@ -31,6 +31,15 @@ void testApp::draw()
     ofSetHexColor(0xffffff);
 
     // we display each ball
+
+    for (int i=0;i<(int)theBalls.size();i++) {
+        for (int k=0; k<(*theBalls[i]).getNbCircles();k++)
+        {
+            (*((*theBalls[i]).getTheCircles()[k])).getRing().draw();
+        }
+    }
+
+
     texBall.bind();
     for (int i=0;i<(int)theBalls.size();i++) {
         ballPlane.set((*theBalls[i]).getRadius(),(*theBalls[i]).getRadius());
@@ -40,12 +49,6 @@ void testApp::draw()
     texBall.unbind();
 
     // we display each ring from each ball
-    for (int i=0;i<(int)theBalls.size();i++) {
-        for (int k=0; k<(*theBalls[i]).getNbCircles();k++)
-        {
-            (*((*theBalls[i]).getTheCircles()[k])).getRing().draw();
-        }
-    }
 
 }
 //--------------------------------------------------------------
