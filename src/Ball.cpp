@@ -1,13 +1,14 @@
 #include "Ball.h"
-
+#include "testApp.h"
 Ball::Ball()
 {
     //ctor
 }
 
-Ball::Ball(int posx,int posy,int posz,int synthNumber_,string  pathToImage_,float r_, int noiseFactor_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_, float lifeSpeed_)
+Ball::Ball(int refNumber_,int posx,int posy,int posz,int synthNumber_,string  pathToImage_,float r_, int noiseFactor_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_, float lifeSpeed_)
 {
-     cout<<"newBall ";
+    refNumber=refNumber_;
+    cout<<"newBall "<<refNumber;
     position.x=posx;
     position.y=posy;
     position.z=posz;
@@ -55,25 +56,17 @@ void Ball::update()
 }
 void Ball::draw()
 {
-
-
-    for(vector< ofPtr<Circle> >::iterator it = theCircles.begin(); it != theCircles.end(); ++it)
-    {
-        {
-            (*it)->getRing().draw();
-        }
-    }
     texBall.bind();
     ballPlane.set(r,r);
-    ballPlane.setPosition(position.x, position.y,10);
+    ballPlane.setPosition(position.x, position.y,position.z);
     ballPlane.draw();
     texBall.unbind();
     // we display each ring from each ball
-
     for(vector< ofPtr<Circle> >::iterator it = theCircles.begin(); it != theCircles.end(); ++it)
     {
         (*it)->getRing().draw();
     }
+
 }
 
 Ball::~Ball()
@@ -96,10 +89,7 @@ void Ball::removeCircles()
 }
 void Ball::removeLinks()
 {
-    for(vector< ofPtr<Link> >::iterator it = linksConnected.begin(); it != linksConnected.end(); ++it)
-    {
-        (*it)->setIsDead(true);
-    }
+    linksConnected.clear();
 }
 ofVec3f Ball::getPosition()
 {
@@ -138,9 +128,9 @@ void Ball::setCircleWidth(int factor)
 {
     circleWidth=factor;
 }
-void Ball::addConnectedLink(Link *link)
+void Ball::addConnectedLink(int refNumber)
 {
-    linksConnected.push_back(ofPtr<Link>(link));
+    linksConnected.push_back(refNumber);
 }
 
 
@@ -149,10 +139,10 @@ bool Ball::linkExist(Ball testedBall)
     //function that test if the ball exist or not.
     bool test=false;
 
-    for(vector< ofPtr<Link> >::iterator it = linksConnected.begin(); it != linksConnected.end(); ++it)
+    for(vector< int >::iterator it = linksConnected.begin(); it != linksConnected.end(); ++it)
     {
         //TODO chercher dans linksConnected si un lien avec la testedBall existe ou non
-        if (true)
+        if ((*it)==testedBall.getRefNumber())
         {
             test=true;
             //println("ball1 :"+ball1+" "+" Ball2 :"+ball2);
@@ -174,8 +164,38 @@ int Ball::getNbCircles()
 {
     return nbCircles;
 }
-
 vector<ofPtr<Circle> > Ball::getTheCircles()
 {
     return theCircles;
+}
+void Ball::addLink(int otherBallRefNumber)
+{
+    linksConnected.push_back(otherBallRefNumber);
+}
+void Ball::removeLink(int otherBallRefNumber)
+{
+    for(vector< int >::iterator it = linksConnected.begin(); it != linksConnected.end(); ++it)
+    {
+        if((*it)==otherBallRefNumber)
+        {
+            linksConnected.erase(it);
+        }
+    }
+}
+int Ball::getRefNumber()
+{
+    return refNumber;
+}
+bool Ball::checkLink(int refNumber)
+{
+    bool test=false;
+    for(vector< int >::iterator it = linksConnected.begin(); it != linksConnected.end(); ++it)
+    {
+        if((*it)==refNumber)
+        {
+            test=true;
+            break;
+        }
+    }
+    return test;
 }

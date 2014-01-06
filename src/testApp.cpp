@@ -14,31 +14,52 @@ void testApp::setup()
     {
         synthsForBalls.push_back(true);
     }
+    minDistToLink=100;
+    maxDistToUnlink=500;
 }
 
 //--------------------------------------------------------------
 void testApp::update()
 {
-    ofBackground(50,50,255);
 
     receiveOscMessage();
-
     for(vector< ofPtr<Ball> >::iterator it = theBalls.begin(); it != theBalls.end(); ++it)
         {
             (*it)->update();
             sendOscInfos((*it));
+            for(vector< ofPtr<Ball> >::iterator sit = theBalls.begin(); sit != theBalls.end(); ++sit)
+            {
+                if((*sit)->getPosition().distance((*it)->getPosition())<minDistToLink)
+                {
+                    (*it)->addLink((*sit)->getRefNumber());
+                }
+            }
         }
 }
 
 //--------------------------------------------------------------
 void testApp::draw()
 {
+    ofBackground(0);
     ofSetHexColor(0xffffff);
     for(vector< ofPtr<Ball> >::iterator it = theBalls.begin(); it != theBalls.end(); ++it)
         {
             (*it)->draw();
+            for(vector< ofPtr<Ball> >::iterator sit = it; sit != theBalls.end(); ++sit)
+            {
+                if((*it)->checkLink((*sit)->getRefNumber()))
+                {
+                    ofVec3f p1,p2;
+                    p1=(*it)->getPosition();
+                    p2=(*sit)->getPosition();
+
+                    ofLine(p1.x,p1.y,p1.z,p2.x,p2.y,p2.z);
+                }
+            }
+
         }
     // we display each ball
+
 
 }
 //--------------------------------------------------------------
@@ -81,7 +102,8 @@ void testApp::mousePressed(int x, int y, int button)
 {
     int synthNbr=attributeSynth();
     cout<<"click "<<synthNbr<<endl;
-    theBalls.push_back(ofPtr<Ball> (new Ball(x,y,0,synthNbr,pathToImages)));
+    theBalls.push_back(ofPtr<Ball> (new Ball(refNumber,x,y,0,synthNbr,pathToImages)));
+    refNumber+=1;
 }
 
 //--------------------------------------------------------------
@@ -114,7 +136,7 @@ void testApp::receiveOscMessage()
     {
 
         OscReceiver.getNextMessage(&OscReceivedMessage);
-        cout<<"received a message : "<<ofToString(OscReceivedMessage.getAddress())<<endl;
+        //cout<<"received a message : "<<ofToString(OscReceivedMessage.getAddress())<<endl;
         if(OscReceivedMessage.getAddress()=="/pad/1")
         {
             //cout<<"first Finger"<<endl;
@@ -122,23 +144,28 @@ void testApp::receiveOscMessage()
             float xVal=OscReceivedMessage.getArgAsFloat(0)*ofGetWidth();
             float yVal=OscReceivedMessage.getArgAsFloat(1)*ofGetHeight();
             cout<<xVal<<" "<<yVal<<endl;
-            theBalls.push_back(ofPtr<Ball> (new Ball (xVal,yVal,0,attributeSynth(),pathToImages)));
+            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,xVal,yVal,0,attributeSynth(),pathToImages)));
+            refNumber+=1;
         }
         else if(OscReceivedMessage.getAddress()=="/pad/2")//deuxième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
+            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
+            refNumber+=1;
         }
         else if(OscReceivedMessage.getAddress()=="/pad/3")//troisième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
+            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
+            refNumber+=1;
         }
         else if(OscReceivedMessage.getAddress()=="/pad/4")//quatrième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
+            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
+            refNumber+=1;
         }
         else if(OscReceivedMessage.getAddress()=="/pad/5")//cinquième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
+            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
+            refNumber+=1;
         }
         else if (OscReceivedMessage.getAddress()=="/1/multifader2/1")//durée de vie de la balle
         {
@@ -235,3 +262,4 @@ void testApp::readXmlSetup()
     cout<<endl<<"*****************************************************************"<<endl;
     cout<<"XML files read, objects created" <<endl;
 }
+

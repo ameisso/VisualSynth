@@ -6,11 +6,12 @@
 class Link;
 class Ball
 {
+
 public:
     Ball();
     virtual ~Ball();
 
-    Ball(int posx,int posy, int posz ,int synthNumber_,string pathToImage_,float r_=15, int noiseFactor_=100,float maxRadius_=50, float minRadius_=10, int nbCircles_=5,int circleWidth_=5,int circleWidthFactor_=30, float lifeSpeed=0.995);
+    Ball(int refNumber,int posx,int posy, int posz ,int synthNumber_,string pathToImage_,float r_=15, int noiseFactor_=100,float maxRadius_=50, float minRadius_=10, int nbCircles_=5,int circleWidth_=5,int circleWidthFactor_=30, float lifeSpeed=0.995);
 
     void update();
     void draw();
@@ -26,14 +27,18 @@ public:
     void addCircle(int radius, int circleWidth);
     void setCircleWidthFactor(int factor);
     void setCircleWidth(int factor);
-    void addConnectedLink(Link* link);
+    void addConnectedLink(int refNumber);
     bool linkExist(Ball testedBall);
     void setNoiseFactor(int nF);
     Ball operator=(const Ball&);
     int getSynthNumber();
     int getNbCircles();
     vector<ofPtr<Circle> > getTheCircles();
-
+    int refNumber;
+    int getRefNumber();
+    void addLink(int otherBallRefNumber);
+    void removeLink(int otherBallRefNumber);
+    bool checkLink(int refNumber);
 
 
 protected:
@@ -45,7 +50,7 @@ private:
     float maxRadius;//max radius of the ball
     float minRadius;
     float r;//current radius of the bal    vector < ofPtr<Circle> >  theCircles;
-    vector<ofPtr<Link> > linksConnected;
+    vector<int> linksConnected;
     vector<ofPtr<Circle> > theCircles;
     bool isDead;
     int nbCircles;

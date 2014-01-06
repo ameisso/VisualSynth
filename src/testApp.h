@@ -21,8 +21,10 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		void receiveOscMessage();
+		int refNumber;
     private :
-
+        int minDistToLink;
+        int maxDistToUnlink;
         vector <bool>synthsForBalls;
 		void sendOscInfos(ofPtr<Ball>&ballToSend);
         int attributeSynth();//fonction qui attribue un synthétiseur à une balle.
