@@ -14,6 +14,8 @@ void testApp::setup()
     {
         synthsForBalls.push_back(true);
     }
+    ballNoiseFactor=200;
+    lifeSpeed=0.995;
     minDistToLink=100;
     maxDistToUnlink=500;
 }
@@ -34,6 +36,11 @@ void testApp::update()
                     (*it)->addLink((*sit)->getRefNumber());
                 }
             }
+            if((*it)->checkIfDead()==true)
+            {
+                 theBalls.erase(it);
+                 break;
+            }
         }
 }
 
@@ -52,7 +59,7 @@ void testApp::draw()
                     ofVec3f p1,p2;
                     p1=(*it)->getPosition();
                     p2=(*sit)->getPosition();
-
+                    //draw des link
                     ofLine(p1.x,p1.y,p1.z,p2.x,p2.y,p2.z);
                 }
             }
@@ -101,8 +108,10 @@ void testApp::mouseDragged(int x, int y, int button)
 void testApp::mousePressed(int x, int y, int button)
 {
     int synthNbr=attributeSynth();
-    cout<<"click "<<synthNbr<<endl;
-    theBalls.push_back(ofPtr<Ball> (new Ball(refNumber,x,y,0,synthNbr,pathToImages)));
+    cout<<"Synth "<<synthNbr<<endl;
+    cout<<"NF"<<ballNoiseFactor<<endl;
+    cout<<"LS"<<lifeSpeed<<endl;
+    theBalls.push_back(ofPtr<Ball> (new Ball(refNumber,x,y,0,synthNbr,pathToImages,ofRandom(10,50),ballNoiseFactor,lifeSpeed)));
     refNumber+=1;
 }
 

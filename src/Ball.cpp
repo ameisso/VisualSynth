@@ -5,7 +5,7 @@ Ball::Ball()
     //ctor
 }
 
-Ball::Ball(int refNumber_,int posx,int posy,int posz,int synthNumber_,string  pathToImage_,float r_, int noiseFactor_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_, float lifeSpeed_)
+Ball::Ball(int refNumber_,int posx,int posy,int posz,int synthNumber_,string  pathToImage_,float r_, int noiseFactor_, float lifeSpeed_, float maxRadius_, float minRadius_, int nbCircles_, int circleWidth_, int circleWidthFactor_)
 {
     refNumber=refNumber_;
     cout<<"newBall "<<refNumber;
@@ -80,7 +80,10 @@ void Ball::fadeIn(float radius)
 }
 void  Ball::fadeOut()
 {
-
+    removeCircles();
+    removeLinks();
+    r=0;
+    isDead=true;
 }
 void Ball::removeCircles()
 {

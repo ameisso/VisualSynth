@@ -30,7 +30,7 @@ class testApp : public ofBaseApp{
         int attributeSynth();//fonction qui attribue un synthétiseur à une balle.
         void readXmlSetup();
         int profZ; //profondeur en z de la fenetre (jusqu'à ou on peut créer des balles en profondeur
-        int lifeSpeed;
+        float lifeSpeed;
         int ballNoiseFactor; //détermine la vitesse de déplacement des balles.
         float zPos; //position en z de la balle.
         int nbSynthsForBalls;
