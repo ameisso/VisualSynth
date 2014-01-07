@@ -17,13 +17,12 @@ void testApp::setup()
     ballNoiseFactor=200;
     lifeSpeed=0.995;
     minDistToLink=100;
-    maxDistToUnlink=500;
+    maxDistToUnlink=200;
 }
 
 //--------------------------------------------------------------
 void testApp::update()
 {
-
     receiveOscMessage();
     for(vector< ofPtr<Ball> >::iterator it = theBalls.begin(); it != theBalls.end(); ++it)
         {
@@ -34,6 +33,11 @@ void testApp::update()
                 if((*sit)->getPosition().distance((*it)->getPosition())<minDistToLink)
                 {
                     (*it)->addLink((*sit)->getRefNumber());
+                }
+                else if((*it)->checkLink((*sit)->getRefNumber())&&(*sit)->getPosition().distance((*it)->getPosition())>maxDistToUnlink)
+                {
+                    (*it)->removeLink((*sit)->getRefNumber());
+                    //cout<<"link removed ["<<(*sit)->getRefNumber()<<","<<(*it)->getRefNumber()<<"]"<<endl;
                 }
             }
             if((*it)->checkIfDead()==true)
@@ -72,7 +76,7 @@ void testApp::draw()
 //--------------------------------------------------------------
 void testApp::keyPressed(int key)
 {
-    //cout<<"key pressed : "<<key<<endl;
+    cout<<"key pressed : "<<key<<endl;
     if (key==70||key==102)
     {
         cout<<"toggle fullscreen"<<endl;
@@ -84,6 +88,12 @@ void testApp::keyPressed(int key)
         int ringWidth = 10;
         (*theBalls.back()).addCircle((*theBalls.back()).getRadius()+ballCircleMargin,ringWidth);
     }
+    if (key == 114||key==82)// r or R
+    {
+        cout<<"all ball unloaded"<<endl;
+       theBalls.clear();
+    }
+
 }
 
 //--------------------------------------------------------------
@@ -111,7 +121,7 @@ void testApp::mousePressed(int x, int y, int button)
     cout<<"Synth "<<synthNbr<<endl;
     cout<<"NF"<<ballNoiseFactor<<endl;
     cout<<"LS"<<lifeSpeed<<endl;
-    theBalls.push_back(ofPtr<Ball> (new Ball(refNumber,x,y,0,synthNbr,pathToImages,ofRandom(10,50),ballNoiseFactor,lifeSpeed)));
+    theBalls.push_back(ofPtr<Ball> (new Ball(refNumber,x,y,500,synthNbr,pathToImages,ofRandom(10,50),ballNoiseFactor,lifeSpeed)));
     refNumber+=1;
 }
 
@@ -140,57 +150,55 @@ void testApp::dragEvent(ofDragInfo dragInfo)
 }
 void testApp::receiveOscMessage()
 {
-
     while(OscReceiver.hasWaitingMessages())
     {
-
         OscReceiver.getNextMessage(&OscReceivedMessage);
         //cout<<"received a message : "<<ofToString(OscReceivedMessage.getAddress())<<endl;
-        if(OscReceivedMessage.getAddress()=="/pad/1")
+        if(OscReceivedMessage.getAddress()=="/pad/1"||OscReceivedMessage.getAddress()=="/1/multixy1/1")
         {
             //cout<<"first Finger"<<endl;
             //Si jamais, on pourra toujours atribuer des paramètres différents en fonction du nombre de doigts.
             float xVal=OscReceivedMessage.getArgAsFloat(0)*ofGetWidth();
             float yVal=OscReceivedMessage.getArgAsFloat(1)*ofGetHeight();
             cout<<xVal<<" "<<yVal<<endl;
-            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,xVal,yVal,0,attributeSynth(),pathToImages)));
+            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,xVal,yVal,zPos,attributeSynth(),pathToImages,ofRandom(10,50),ballNoiseFactor,lifeSpeed)));
             refNumber+=1;
         }
-        else if(OscReceivedMessage.getAddress()=="/pad/2")//deuxième doigt
+        else if(OscReceivedMessage.getAddress()=="/pad/2"||OscReceivedMessage.getAddress()=="/1/multixy/2")//deuxième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
+            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),zPos,attributeSynth(),pathToImages,ofRandom(10,50),ballNoiseFactor,lifeSpeed)));
             refNumber+=1;
         }
-        else if(OscReceivedMessage.getAddress()=="/pad/3")//troisième doigt
+        else if(OscReceivedMessage.getAddress()=="/pad/3"||OscReceivedMessage.getAddress()=="/1/multixy/3")//troisième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
+            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),zPos,attributeSynth(),pathToImages,ofRandom(10,50),ballNoiseFactor,lifeSpeed)));
             refNumber+=1;
         }
-        else if(OscReceivedMessage.getAddress()=="/pad/4")//quatrième doigt
+        else if(OscReceivedMessage.getAddress()=="/pad/4"||OscReceivedMessage.getAddress()=="/1/multixy/4")//quatrième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
+            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),zPos,attributeSynth(),pathToImages,ofRandom(10,50),ballNoiseFactor,lifeSpeed)));
             refNumber+=1;
         }
-        else if(OscReceivedMessage.getAddress()=="/pad/5")//cinquième doigt
+        else if(OscReceivedMessage.getAddress()=="/pad/5"||OscReceivedMessage.getAddress()=="/1/multixy/5")//cinquième doigt
         {
-            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),0,attributeSynth(),pathToImages)));
+            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),zPos,attributeSynth(),pathToImages,ofRandom(10,50),ballNoiseFactor,lifeSpeed)));
             refNumber+=1;
         }
-        else if (OscReceivedMessage.getAddress()=="/1/multifader2/1")//durée de vie de la balle
+        else if (OscReceivedMessage.getAddress()=="/1/multifader1/1")//durée de vie de la balle
         {
             lifeSpeed=ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0.9,1);
         }
-        else if (OscReceivedMessage.getAddress()=="/1/multifader2/2")//vitesse de déplacement
+        else if (OscReceivedMessage.getAddress()=="/1/multifader1/2")//vitesse de déplacement
         {
            ballNoiseFactor=(int)200*OscReceivedMessage.getArgAsFloat(0);
         }
-        else if (OscReceivedMessage.getAddress()=="/1/multifader2/3")//position en z
+        else if (OscReceivedMessage.getAddress()=="/1/multifader1/3")//position en z
         {
            zPos=ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,profZ);
         }
         else
             {
-                cout<<"I don't know this message "<<endl;
+                cout<<"I don't know this message :"<<ofToString(OscReceivedMessage.getAddress())<<endl;
             }
     }
 }

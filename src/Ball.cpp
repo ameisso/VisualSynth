@@ -52,6 +52,10 @@ void Ball::update()
     {
         fadeOut();
     }
+    else if(position.x<0||position.x>ofGetWidth()||position.y<0||position.y>ofGetHeight())
+    {
+        fadeOut();
+    }
 
 }
 void Ball::draw()
