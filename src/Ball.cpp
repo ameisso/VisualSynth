@@ -52,6 +52,11 @@ void Ball::update()
     {
         fadeOut();
     }
+    for(vector< ofPtr<Circle> >::iterator it = theCircles.begin(); it != theCircles.end(); ++it)
+    {
+        (*it)->update(position);//,(*it)->getRadius(), (*it)->getCircleWidth());
+        //cout << (*it)->getRadius() << endl;
+    }
 
 }
 void Ball::draw()
@@ -66,7 +71,6 @@ void Ball::draw()
     {
         (*it)->getRing().draw();
     }
-
 }
 
 Ball::~Ball()
@@ -117,10 +121,10 @@ void Ball::setRadius(float radius)
         r=radius;
     }
 }
-void Ball::addCircle(int radius, int circleWidth)
+void Ball::addCircle(int circleRadius, int circleWidth)
 {
     int radiusIncrease = 30;
-    theCircles.push_back(ofPtr<Circle> (new Circle(radius + nbCircles*radiusIncrease, circleWidth, position)));
+    theCircles.push_back(ofPtr<Circle> (new Circle(circleRadius + nbCircles*radiusIncrease, circleWidth, position)));
     nbCircles ++;
 }
 void Ball::setCircleWidthFactor(int factor)

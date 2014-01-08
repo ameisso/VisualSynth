@@ -56,11 +56,16 @@ void testApp::draw()
             {
                 if((*it)->checkLink((*sit)->getRefNumber()))
                 {
-                    ofVec3f p1,p2;
+                    ofVec3f p1,p2,d;
                     p1=(*it)->getPosition();
                     p2=(*sit)->getPosition();
-                    //draw des link
-                    ofLine(p1.x,p1.y,p1.z,p2.x,p2.y,p2.z);
+                    d = p2-p1;
+                    ofPoint cp = ofPoint(p1.x + 0.3*d.x, p1.y+0.7*d.y, p1.z);
+                    ofPath link;
+                    link.setFilled(false);
+                    link.quadBezierTo(p1+0.1*d,cp,p2-0.1*d);
+                    link.draw();
+
                 }
             }
 
@@ -78,11 +83,13 @@ void testApp::keyPressed(int key)
         cout<<"toggle fullscreen"<<endl;
         ofToggleFullscreen();
     }
+
     if (key == 32) //space to create a ring around the last ball
     {
-        int ballCircleMargin = 10;
-        int ringWidth = 10;
-        (*theBalls.back()).addCircle((*theBalls.back()).getRadius()+ballCircleMargin,ringWidth);
+        //int ballCircleMargin = 10;
+        int ringWidth = 5;
+        (*theBalls.back()).addCircle((*theBalls.back()).getRadius(),ringWidth);
+        //cout << (*theBalls.back()).getRadius() << endl;
     }
 }
 

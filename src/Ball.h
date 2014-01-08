@@ -11,7 +11,7 @@ public:
     Ball();
     virtual ~Ball();
 
-    Ball(int refNumber,int posx,int posy, int posz ,int synthNumber_,string pathToImage_,float r_=15, int noiseFactor_=100, float lifeSpeed=0.995,float maxRadius_=50, float minRadius_=10, int nbCircles_=5,int circleWidth_=5,int circleWidthFactor_=30);
+    Ball(int refNumber,int posx,int posy, int posz ,int synthNumber_,string pathToImage_,float r_=15, int noiseFactor_=100, float lifeSpeed=0.995,float maxRadius_=50, float minRadius_=10, int nbCircles_=0,int circleWidth_=5,int circleWidthFactor_=30);
 
     void update();
     void draw();
@@ -24,7 +24,7 @@ public:
     bool checkIfDead();
     float getRadius();
     void setRadius(float radius);
-    void addCircle(int radius, int circleWidth);
+    void addCircle(int circleRadius, int circleWidth);
     void setCircleWidthFactor(int factor);
     void setCircleWidth(int factor);
     void addConnectedLink(int refNumber);

@@ -6,9 +6,10 @@ class Circle
 public:
     Circle(int radius_, int circleWidth_, ofVec3f center_);
     virtual ~Circle();
-    void update(ofVec3f center_, int radius_, int circleWidth_);
+    void update(ofVec3f center_);
     void setRadius(int radius_);
     int getRadius();
+    int getCircleWidth();
     ofPath getRing();
 
 protected:
