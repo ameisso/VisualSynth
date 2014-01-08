@@ -52,12 +52,16 @@ void Ball::update()
     {
         fadeOut();
     }
+        //cout << (*it)->getRadius() << endl;
+    else if(position.x<0||position.x>ofGetWidth()||position.y<0||position.y>ofGetHeight())
+    {
+        fadeOut();
+    }
+
     for(vector< ofPtr<Circle> >::iterator it = theCircles.begin(); it != theCircles.end(); ++it)
     {
         (*it)->update(position);//,(*it)->getRadius(), (*it)->getCircleWidth());
-        //cout << (*it)->getRadius() << endl;
     }
-
 }
 void Ball::draw()
 {
