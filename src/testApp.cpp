@@ -60,14 +60,20 @@ void testApp::draw()
             {
                 if((*it)->checkLink((*sit)->getRefNumber()))
                 {
-                    ofVec3f p1,p2,d;
+                    ofVec3f p1,p2,d,n;
                     p1=(*it)->getPosition();
                     p2=(*sit)->getPosition();
                     d = p2-p1;
-                    ofPoint cp = ofPoint(p1.x + 0.3*d.x, p1.y+0.7*d.y, p1.z);
+                    n.x = d.y;
+                    n.y = -d.x;
+                    ofPoint cp1 = ofPoint(p1 + 0.4*d+0.2*n);
+                    //ofPoint cp2 = ofPoint(p1+0.9*d+0.1*n);
                     ofPath link;
+                    ofLine(p1,p1);
                     link.setFilled(false);
-                    link.quadBezierTo(p1+0.1*d,cp,p2-0.1*d);
+                    link.quadBezierTo(p1,cp1,p2);
+                    //link.close();
+                    //link.quadBezierTo(p2-0.1*d,cp2,p1+0.1*d);
                     link.draw();
 
                 }
@@ -90,10 +96,11 @@ void testApp::keyPressed(int key)
 
     if (key == 32) //space to create a ring around the last ball
     {
-        //int ballCircleMargin = 10;
-        int ringWidth = 5;
-        (*theBalls.back()).addCircle((*theBalls.back()).getRadius(),ringWidth);
-        //cout << (*theBalls.back()).getRadius() << endl;
+        if (theBalls.size() != 0)
+        {
+             int ringWidth = 5;
+            (*theBalls.back()).addCircle((*theBalls.back()).getRadius(),ringWidth);
+        }
     }
     if (key == 114||key==82)// r or R
     {
@@ -128,7 +135,7 @@ void testApp::mousePressed(int x, int y, int button)
     cout<<"Synth "<<synthNbr<<endl;
     cout<<"NF"<<ballNoiseFactor<<endl;
     cout<<"LS"<<lifeSpeed<<endl;
-    theBalls.push_back(ofPtr<Ball> (new Ball(refNumber,x,y,500,synthNbr,pathToImages,ofRandom(10,50),ballNoiseFactor,lifeSpeed)));
+    theBalls.push_back(ofPtr<Ball> (new Ball(refNumber,x,y,0,synthNbr,pathToImages,ofRandom(10,50),ballNoiseFactor,lifeSpeed)));
     refNumber+=1;
 }
 
