@@ -1,8 +1,0 @@
-VisualSynth.xcodeproj
-/bin/*
-/src/*
-Makefile
-Project.xconfig
-addons.make
-config.make
-openFrameworks-Info.plist
