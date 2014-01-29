@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<root>
+	<osc>
+		<receivePort>8000</receivePort><!--port de reception -->
+		<sendIp>127.0.0.1</sendIp><!--ip d'envoi pour le feedback -->
+		<sendPort>8001</sendPort><!--port d'envoi -->
+	</osc>
+	<screen>
+		<profondeurZ>500</profondeurZ>
+	</screen>
+	<synth>
+		<nbSynthsForBalls>6</nbSynthsForBalls>
+	</synth>
+	<path>images</path><!--chemin vers le dossier de texturezs-->
+	<textures>
+		<image id="0">dot.png</image>
+		<image id="1">neb.png</image>
+		<image id="2">gun.png</image>
+		<image id="3">blob.png</image>
+		<image id="4">fire.png</image>
+		<image id="5">hair.png</image>
+		<image id="6">sun.png</image>
+
+	</textures >
+</root>
