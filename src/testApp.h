@@ -38,6 +38,7 @@ class testApp : public ofBaseApp{
         string imageName;
 		// vector to store all balls
 		vector < ofPtr<Ball> > theBalls;
+		vector < ofPtr<Ball> > permanentBalls;
 		vector < ofPtr<Link> > theLinks;
         //OSC
         ofxOscReceiver OscReceiver;

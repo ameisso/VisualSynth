@@ -18,6 +18,14 @@ void testApp::setup()
     lifeSpeed=0.995;
     minDistToLink=100;
     maxDistToUnlink=200;
+
+    int immortal = 1;
+    int permanentBallCenterX1 = 0.25*ofGetWindowWidth();
+    int permanentBallCenterX2 = 0.75*ofGetWindowWidth();
+    int permanentBallCenterY = 0.5*ofGetWindowHeight();
+
+    permanentBalls.push_back(ofPtr<Ball> (new Ball(-1,permanentBallCenterX1,permanentBallCenterY,0,0,pathToImages,200,0,immortal,400)));
+    permanentBalls.push_back(ofPtr<Ball> (new Ball(-1,permanentBallCenterX2,permanentBallCenterY,0,0,pathToImages,200,0,immortal,400)));
 }
 
 //--------------------------------------------------------------
@@ -46,6 +54,18 @@ void testApp::update()
                  break;
             }
         }
+
+    for(vector< ofPtr<Ball> >::iterator it = permanentBalls.begin(); it != permanentBalls.end(); ++it)
+        {
+            if ((*it)->getRadius() > 180 )
+            {
+                (*it)->setRadius((*it)->getRadius()+ofRandom(-2,2));
+            }
+
+            else
+                (*it)->setRadius((*it)->getRadius()+ofRandom(2,6));
+
+        }
 }
 
 //--------------------------------------------------------------
@@ -63,26 +83,22 @@ void testApp::draw()
                     ofVec3f p1,p2,d,n;
                     p1=(*it)->getPosition();
                     p2=(*sit)->getPosition();
-                    d = p2-p1;
-                    n.x = d.y;
+                    d = p2-p1;  // vecteur p1p2
+                    n.x = d.y;  // n : vecteur normal à d
                     n.y = -d.x;
-                    ofPoint cp1 = ofPoint(p1 + 0.4*d+0.2*n);
-                    //ofPoint cp2 = ofPoint(p1+0.9*d+0.1*n);
-                    ofPath link;
-                    ofLine(p1,p1);
-                    link.setFilled(false);
-                    link.quadBezierTo(p1,cp1,p2);
-                    //link.close();
-                    //link.quadBezierTo(p2-0.1*d,cp2,p1+0.1*d);
+                    ofPoint cp1 = ofPoint(p1 + 0.3*d+0.4*n); // point de contrôle
+                    ofPolyline link;
+                    link.quadBezierTo(p1+0.1*d,cp1,p2-0.1*d);
                     link.draw();
-
                 }
             }
-
         }
-    // we display each ball
+    // we display each ball and each link
 
-
+    for(vector< ofPtr<Ball> >::iterator it = permanentBalls.begin(); it != permanentBalls.end(); ++it)
+        {
+            (*it)->draw();
+        }
 }
 //--------------------------------------------------------------
 void testApp::keyPressed(int key)
