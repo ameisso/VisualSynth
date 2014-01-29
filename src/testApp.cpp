@@ -88,7 +88,7 @@ void testApp::draw()
                     n.y = -d.x;
                     ofPoint cp1 = ofPoint(p1 + 0.3*d+0.4*n); // point de contrôle
                     ofPolyline link;
-                    link.quadBezierTo(p1+0.1*d,cp1,p2-0.1*d);
+                    link.quadBezierTo(p1+0*d,cp1,p2-0*d);
                     link.draw();
                 }
             }
