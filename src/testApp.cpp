@@ -128,7 +128,7 @@ void testApp::mousePressed(int x, int y, int button)
     cout<<"Synth "<<synthNbr<<endl;
     cout<<"NF"<<ballNoiseFactor<<endl;
     cout<<"LS"<<lifeSpeed<<endl;
-    theBalls.push_back(ofPtr<Ball> (new Ball(refNumber,x,y,500,synthNbr,pathToImages,ofRandom(10,50),ballNoiseFactor,lifeSpeed)));
+    theBalls.push_back(ofPtr<Ball> (new Ball(refNumber,x,y,0,synthNbr,pathToImages,ofRandom(10,50),ballNoiseFactor,lifeSpeed)));
     refNumber+=1;
 }
 
