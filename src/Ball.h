@@ -59,7 +59,6 @@ private:
     int circleWidthFactor;
     int synthNumber;//numéro du synthétiseur qui est attribué à la balle.
 
-    //opengl
     string pathToImage;
     ofPlanePrimitive ballPlane;
     ofImage texBall;

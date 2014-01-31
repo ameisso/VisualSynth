@@ -23,6 +23,7 @@ Ball::Ball(int refNumber_,int posx,int posy,int posz,int synthNumber_,string  pa
     isDead=false;
     lifeSpeed=lifeSpeed_;
     synthNumber=synthNumber_;
+    velocity = ofVec3f(0,0,0);
 
     // image
     texBall.loadImage(pathToImage);

@@ -14,8 +14,8 @@ void testApp::setup()
     {
         synthsForBalls.push_back(true);
     }
-    ballNoiseFactor=200;
-    lifeSpeed=0.995;
+    ballNoiseFactor=100;
+    lifeSpeed=0.998;
     minDistToLink=100;
     maxDistToUnlink=200;
 
@@ -86,9 +86,12 @@ void testApp::draw()
                     d = p2-p1;  // vecteur p1p2
                     n.x = d.y;  // n : vecteur normal à d
                     n.y = -d.x;
-                    ofPoint cp1 = ofPoint(p1 + 0.3*d+0.4*n); // point de contrôle
+                    ofPoint cp1 = ofPoint(p1 + 0.1*d+0.5*n); // point de contrôle
+                    ofPoint cp2 = ofPoint(p1 + 0.9*d-0.5*n);
+                    //ofPoint cp3 = ofPoint(p1 + 0.8*d+0.5*n);
                     ofPolyline link;
-                    link.quadBezierTo(p1+0*d,cp1,p2-0*d);
+                    link.quadBezierTo(p1,cp1,p1+0.5*d);
+                    link.quadBezierTo(p1+0.5*d,cp2,p2);
                     link.draw();
                 }
             }
@@ -309,4 +312,3 @@ void testApp::readXmlSetup()
     cout<<endl<<"*****************************************************************"<<endl;
     cout<<"XML files read, objects created" <<endl;
 }
-
