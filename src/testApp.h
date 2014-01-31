@@ -25,6 +25,7 @@ class testApp : public ofBaseApp{
     private :
         int minDistToLink;
         int maxDistToUnlink;
+		bool showLinks;
         vector <bool>synthsForBalls;
 		void sendOscInfos(ofPtr<Ball>&ballToSend);
         int attributeSynth();//fonction qui attribue un synthétiseur à une balle.
@@ -40,6 +41,7 @@ class testApp : public ofBaseApp{
 		vector < ofPtr<Ball> > theBalls;
 		vector < ofPtr<Ball> > permanentBalls;
 		vector < ofPtr<Link> > theLinks;
+		vector < string > theTextures;
         //OSC
         ofxOscReceiver OscReceiver;
         ofxOscMessage OscReceivedMessage;
