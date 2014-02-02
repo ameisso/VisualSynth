@@ -16,8 +16,6 @@ void testApp::setup()
     }
     ballNoiseFactor=100;
     lifeSpeed=0.998;
-    minDistToLink=100;
-    maxDistToUnlink=200;
 	circleWidth=3;
 	circleIncrease=10;
 	nbCircles=0;
@@ -41,6 +39,7 @@ void testApp::setup()
 void testApp::update()
 {
     receiveOscMessage();
+	sendOscGeneral();
     for(vector< ofPtr<Ball> >::iterator it = theBalls.begin(); it != theBalls.end(); ++it)
         {
             (*it)->update();
@@ -276,11 +275,11 @@ void testApp::receiveOscMessage()
         }
 		else if (OscReceivedMessage.getAddress()=="/link/1")
 		{
-			curveFactor=ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,2);
+			curveFactor=ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,0.5);
 		}
 		else if (OscReceivedMessage.getAddress()=="/link/2")
 		{
-			curveAmplitude=ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,2);
+			curveAmplitude=ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,0.5);
 		}
 		else if (OscReceivedMessage.getAddress()=="/reset")
 		{
@@ -316,6 +315,28 @@ void testApp::receiveOscMessage()
 		}
     }
 }
+void testApp::sendOscGeneral()
+{
+	string address="/Links";
+    ofxOscMessage msgToSend = ofxOscMessage();
+    msgToSend.setAddress(address);
+	if(curvedLinks==true)
+	{
+	msgToSend.addFloatArg(curvePosition*2);
+	msgToSend.addFloatArg(curveFactor*2);
+	}
+	else
+	{
+	msgToSend.addFloatArg(0.1);
+	msgToSend.addFloatArg(0);
+	}
+	oscSender.sendMessage(msgToSend);
+	address="/BallGeneral";
+    msgToSend.setAddress(address);
+	msgToSend.addFloatArg(theBalls.size());
+	oscSender.sendMessage(msgToSend);
+	
+}
 //fonction qui va envoyer par osc tout les paramètres de la balle.
 void testApp::sendOscInfos(ofPtr<Ball>& ballToSend)
 {
@@ -335,10 +356,10 @@ void testApp::sendOscInfos(ofPtr<Ball>& ballToSend)
 	}
 	msgToSend.addFloatArg(dead);
 	msgToSend.addFloatArg(ballToSend->getRadius());
-    msgToSend.addFloatArg(ballToSend->getPosition().x);
+    //msgToSend.addFloatArg(ballToSend->getPosition().x);
     //msgToSend.addFloatArg(ballToSend->getPosition().y);
     //msgToSend.addFloatArg(ballToSend->getPosition().z);
-	msgToSend.addFloatArg(ballToSend->getVelocity().x);
+	//msgToSend.addFloatArg(ballToSend->getVelocity().x);
     //msgToSend.addFloatArg(ballToSend->getVelocity().y);
     //msgToSend.addFloatArg(ballToSend->getVelocity().z);
     //-----
@@ -387,6 +408,8 @@ void testApp::readXmlSetup()
 	maxCircles=configFile.getIntValue("maxCircles");
 	maxCircleWidth=configFile.getIntValue("maxCircleWidth");
 	maxCircleIncrease=configFile.getIntValue("maxCircleIncrease");
+	minDistToLink=configFile.getIntValue("minDistToLink");
+	maxDistToUnlink=configFile.getIntValue("maxDistToUnlink");
     cout<<"path to Images :"<<pathToImages<<endl;
     configFile.setTo("osc");
     oscReceivePort=configFile.getIntValue("receivePort");
