@@ -11,7 +11,7 @@ public:
     Ball();
     virtual ~Ball();
 
-    Ball(int refNumber,int posx,int posy, int posz ,int synthNumber_,string pathToImage_,float r_=15, int noiseFactor_=100, float lifeSpeed=0.995,float maxRadius_=50, float minRadius_=10, int nbCircles_=0,int circleWidth_=5,int circleWidthFactor_=30);
+    Ball(int refNumber,int posx,int posy, int posz ,int synthNumber_,string pathToImage_, int noiseFactor_=100, float lifeSpeed=0.995,int nbCircles_=0,int circleWidth_=5,int circleWidthFactor_=30,float maxRadius_=100, float minRadius_=10);
 
     void update();
     void draw();
@@ -21,6 +21,7 @@ public:
     void removeCircles();
     void removeLinks();
     ofVec3f getPosition();
+	ofVec3f getVelocity();
     bool checkIfDead();
     float getRadius();
     void setRadius(float radius);
@@ -49,7 +50,7 @@ private:
     float lifeSpeed;
     float maxRadius;//max radius of the ball
     float minRadius;
-    float r;//current radius of the bal    vector < ofPtr<Circle> >  theCircles;
+    float r;//current radius of the ball vector < ofPtr<Circle> >  theCircles;
     vector<int> linksConnected;
     vector<ofPtr<Circle> > theCircles;
     bool isDead;
