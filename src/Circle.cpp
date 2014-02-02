@@ -18,10 +18,11 @@ Circle::~Circle()
 {
     //dtor
 }
-void Circle::update(ofVec3f center_)
+void Circle::update(ofVec3f center_, int circleWidth_, int radius_)
 {
     center=center_;
-
+	circleWidth = circleWidth_;
+	radius = radius_;
     ring.clear();
     ofPoint p(center);
     ring.setCircleResolution(100);
