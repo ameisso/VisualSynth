@@ -24,8 +24,8 @@ void testApp::setup()
     int permanentBallCenterX2 = 0.75*ofGetWindowWidth();
     int permanentBallCenterY = 0.5*ofGetWindowHeight();
 
-    permanentBalls.push_back(ofPtr<Ball> (new Ball(-1,permanentBallCenterX1,permanentBallCenterY,0,0,pathToImages,200,0,immortal,400)));
-    permanentBalls.push_back(ofPtr<Ball> (new Ball(-1,permanentBallCenterX2,permanentBallCenterY,0,0,pathToImages,200,0,immortal,400)));
+    permanentBalls.push_back(ofPtr<Ball> (new Ball(-1,permanentBallCenterX1,permanentBallCenterY,0,0,pathToImages+"/orange.png",200,0,immortal,400)));
+    permanentBalls.push_back(ofPtr<Ball> (new Ball(-1,permanentBallCenterX2,permanentBallCenterY,0,0,pathToImages+"/jaune.png",200,0,immortal,400)));
     showLinks=true;
 
 }
@@ -315,8 +315,6 @@ void testApp::readXmlSetup()
     ofBuffer buffer=file.readToBuffer();
     ofXml configFile;
     configFile.loadFromBuffer(buffer.getText());
-    pathToImages=configFile.getValue("path");
-    cout<<"path to Images :"<<pathToImages<<endl;
     configFile.setTo("osc");
     oscReceivePort=configFile.getIntValue("receivePort");
     cout<<"receivePort :"<<oscReceivePort<<endl;
@@ -331,13 +329,16 @@ void testApp::readXmlSetup()
     nbSynthsForBalls=configFile.getIntValue("nbSynthsForBalls");
     cout<<"nbSynthsForBalls :"<<nbSynthsForBalls<<endl;
     configFile.setTo("../textures");
-    int nbTextures=configFile.getNumChildren();
+    pathToImages=configFile.getValue("path");
+    cout<<"path to Images :"<<pathToImages<<endl;
+    int nbTextures=configFile.getNumChildren()-1;
     cout<<"NB textures : "<<nbTextures<<endl;
     for(int i=0; i<nbTextures; i++)
     {
         theTextures.push_back(configFile.getValue("image["+ofToString(i)+"]"));
         cout<<"texture["<<ofToString(i)<<"]"<<configFile.getValue("image["+ofToString(i)+"]")<<endl;
     }
+
 
     file.close();
     buffer.clear();
