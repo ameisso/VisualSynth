@@ -25,6 +25,7 @@ class testApp : public ofBaseApp{
     private :
         vector <bool>synthsForBalls;
 		void sendOscInfos(ofPtr<Ball>&ballToSend);
+		void sendOscGeneral();
         int attributeSynth();//fonction qui attribue un synthétiseur à une balle.
         void readXmlSetup();
 
