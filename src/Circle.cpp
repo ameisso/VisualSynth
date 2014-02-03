@@ -18,17 +18,18 @@ Circle::~Circle()
 {
     //dtor
 }
-void Circle::update(ofVec3f center_)
+void Circle::update(ofVec3f center_, int circleWidth_, int radius_)
 {
     center=center_;
-
+	circleWidth = circleWidth_;
+	radius = radius_;
     ring.clear();
     ofPoint p(center);
     ring.setCircleResolution(100);
     ring.circle(p,radius+circleWidth/2);
     ring.circle(p,radius-circleWidth/2);
 	ring.close();
-    ofColor c(255, 255,255);    // ring color ! -> new parameter ?
+    ofColor c(255, 255,255);
 	ring.setFillColor(c);
 	ring.setFilled(true);
 }
