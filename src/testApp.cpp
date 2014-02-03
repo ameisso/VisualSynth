@@ -240,21 +240,30 @@ void testApp::receiveOscMessage()
         //cout<<"received a message : "<<ofToString(OscReceivedMessage.getAddress())<<endl;
         if(OscReceivedMessage.getAddress()=="/pad/1"||OscReceivedMessage.getAddress()=="/1/multixy1/1")
         {
-            //cout<<"first Finger"<<endl;
+			//cout<<"first Finger"<<OscReceivedMessage.getArgAsFloat(0)<<endl;
             //Si jamais, on pourra toujours atribuer des paramètres différents en fonction du nombre de doigts.
-            float xVal=OscReceivedMessage.getArgAsFloat(0)*ofGetWidth();
-            float yVal=OscReceivedMessage.getArgAsFloat(1)*ofGetHeight();
-            //cout<<xVal<<" "<<yVal<<endl;
-            int synthNbr=attributeSynth();
-            string path=pathToImages+"/"+theTextures[synthNbr];
-            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,xVal,yVal,zPos,synthNbr,path,ballNoiseFactor,lifeSpeed,nbCircles,circleWidth,circleIncrease,50,10)));
-            refNumber+=1;
+            float xVal=OscReceivedMessage.getArgAsFloat(1)*ofGetWidth();
+            float yVal=ofGetHeight()-OscReceivedMessage.getArgAsFloat(0)*ofGetHeight();
+			if(lastBallPosition.x!=xVal&&lastBallPosition.y!=yVal)
+			{
+				lastBallPosition.x=xVal;
+				lastBallPosition.y=yVal;
+				//cout<<xVal<<" "<<yVal<<endl;
+				int synthNbr=attributeSynth();
+				string path=pathToImages+"/"+theTextures[synthNbr];
+				theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,xVal,yVal,zPos,synthNbr,path,ballNoiseFactor,lifeSpeed,nbCircles,circleWidth,circleIncrease,50,10)));
+				refNumber+=1;
+				ofxOscMessage msgToSend = ofxOscMessage();
+				msgToSend.setAddress("/newBall");
+				msgToSend.addFloatArg(refNumber);
+				oscSender.sendMessage(msgToSend);
+			}
         }
         else if(OscReceivedMessage.getAddress()=="/pad/2"||OscReceivedMessage.getAddress()=="/1/multixy/2")//deuxième doigt
         {
             int synthNbr=attributeSynth();
             string path=pathToImages+"/"+theTextures[synthNbr];
-            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(0)*ofGetWidth(),OscReceivedMessage.getArgAsFloat(1)*ofGetHeight(),zPos,synthNbr,path,ballNoiseFactor,lifeSpeed,0,0,0,50,10)));
+            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(1)*ofGetWidth(),ofGetHeight()-OscReceivedMessage.getArgAsFloat(0)*ofGetHeight(),zPos,synthNbr,path,ballNoiseFactor,lifeSpeed,0,0,0,50,10)));
             refNumber+=1;
         }
 		else if (OscReceivedMessage.getAddress()=="/1/multifader1/1")//durée de vie de la balle
@@ -279,8 +288,12 @@ void testApp::receiveOscMessage()
         }
 		else if (OscReceivedMessage.getAddress()=="/1/ringFader/2")//largeur de cercles
         {
-			circleWidth=ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,1,maxCircleWidth);
+			circleWidth=ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,2,maxCircleWidth);
             cout<<"CircleWidth :"<<circleWidth<<endl;
+			for(vector< ofPtr<Ball> >::iterator it = theBalls.begin(); it != theBalls.end(); ++it)
+			{
+				(*it)->setCircleWidth(circleWidth);
+			}
         }
 		else if (OscReceivedMessage.getAddress()=="/1/ringFader/3")
 		{
@@ -341,14 +354,43 @@ void testApp::sendOscGeneral()
 	}
 	else
 	{
-	msgToSend.addFloatArg(0);
-	msgToSend.addFloatArg(0);
+	msgToSend.addFloatArg(0.0);
+	msgToSend.addFloatArg(0.0);
 	}
 	oscSender.sendMessage(msgToSend);
+	ofxOscMessage msgToSend4 = ofxOscMessage();
+	address="/LinkGeneral";
+    msgToSend4.setAddress(address);
+	msgToSend4.addFloatArg(lifeSpeed);
+	msgToSend4.addFloatArg(ballNoiseFactor);
+	msgToSend4.addFloatArg(zPos);
+	oscSender.sendMessage(msgToSend4);
+	ofxOscMessage msgToSend2 = ofxOscMessage();//! pour l'osc il faut créer un nouveau message à chaque fois.
+	address="/CirclesGeneral";
+    msgToSend2.setAddress(address);
+	if(nbCircles!=0)
+	{
+		msgToSend2.addFloatArg((float)nbCircles);
+		msgToSend2.addFloatArg((float)circleWidth);
+		msgToSend2.addFloatArg((float)circleIncrease);
+	}
+	else
+	{
+		msgToSend2.addFloatArg(0.0);
+		msgToSend2.addFloatArg(0.0);
+		msgToSend2.addFloatArg(0.0);
+	}
+
+	oscSender.sendMessage(msgToSend2);
+	ofxOscMessage msgToSend3 = ofxOscMessage();
 	address="/BallGeneral";
-    msgToSend.setAddress(address);
-	msgToSend.addFloatArg(theBalls.size());
-	oscSender.sendMessage(msgToSend);
+    msgToSend3.setAddress(address);
+	msgToSend3.addFloatArg(lifeSpeed);
+	msgToSend3.addFloatArg(ballNoiseFactor);
+	msgToSend3.addFloatArg(zPos);
+	msgToSend3.addFloatArg((float)theBalls.size());
+	oscSender.sendMessage(msgToSend3);
+
 
 }
 //fonction qui va envoyer par osc tout les paramètres de la balle.
@@ -378,7 +420,7 @@ void testApp::sendOscInfos(ofPtr<Ball>& ballToSend)
     //msgToSend.addFloatArg(ballToSend->getVelocity().z);
     //-----
     //ajouter ici les autre paramètres pour envoyer toutes les infos dans une seule trame ...après tout l'osc c'est fait pour ca.
-    oscSender.sendMessage(msgToSend);
+    //oscSender.sendMessage(msgToSend);
 	//cout<<"Sended : "<<value<<" @"<< address<<endl;
 }
 int testApp::attributeSynth()

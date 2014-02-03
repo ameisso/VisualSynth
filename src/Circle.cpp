@@ -1,5 +1,5 @@
 #include "Circle.h"
-Circle::Circle(int radius_, int circleWidth_, ofVec3f center_)
+Circle::Circle(int radius_, float circleWidth_, ofVec3f center_)
 {
     radius=radius_;
     circleWidth=circleWidth_;
@@ -18,7 +18,7 @@ Circle::~Circle()
 {
     //dtor
 }
-void Circle::update(ofVec3f center_, int circleWidth_, int radius_)
+void Circle::update(ofVec3f center_, float circleWidth_, int radius_)
 {
     center=center_;
 	circleWidth = circleWidth_;

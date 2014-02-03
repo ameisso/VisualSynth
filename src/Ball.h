@@ -32,8 +32,7 @@ public:
     //CERCLES
     void removeCircles();
     void addCircle(int circleRadius, int circleWidth);
-    void setCircleWidthFactor(int factor);
-    void setCircleWidth(int factor);
+    void setCircleWidth(float factor);
     int getNbCircles();
     vector<ofPtr<Circle> > getTheCircles();
 
@@ -68,7 +67,7 @@ private:
     // CERCLES
     vector<ofPtr<Circle> > theCircles;
     int nbCircles;
-    int circleWidth;
+    float circleWidth;
     int circleWidthFactor;
 
     // LIENS

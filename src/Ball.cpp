@@ -95,7 +95,6 @@ void Ball::fadeIn(float radius)
 	for(int i=0; i<nbCircles; i++)
 	{
 		theCircles.push_back(ofPtr<Circle> (new Circle(30 + i*circleWidthFactor, circleWidth, position)));
-		cout<<"nexCircle"<<endl;
 	}
 
 }
@@ -176,14 +175,10 @@ void Ball::removeCircles()
 
 void Ball::addCircle(int circleRadius, int circleWidth)
 {
-	theCircles.push_back(ofPtr<Circle> (new Circle(circleRadius + nbCircles*circleWidthFactor, circleWidth, position)));
+	theCircles.push_back(ofPtr<Circle> (new Circle(r + nbCircles*circleWidthFactor, circleWidth, position)));
 	nbCircles ++;
 }
-void Ball::setCircleWidthFactor(int factor)
-{
-	circleWidthFactor=factor;
-}
-void Ball::setCircleWidth(int factor)
+void Ball::setCircleWidth(float factor)
 {
 	circleWidth=factor;
 }

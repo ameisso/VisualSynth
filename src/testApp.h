@@ -36,6 +36,7 @@ class testApp : public ofBaseApp{
 		int ballNoiseFactor; //détermine la vitesse de déplacement des balles.
 		float zPos; //position en z de la balle.
 		int nbSynthsForBalls;
+		ofVec2f lastBallPosition;//evite de cr�er deux fois une balle avec la tablette
 	//LINKS
 		int minDistToLink;
 		int maxDistToUnlink;
@@ -47,7 +48,7 @@ class testApp : public ofBaseApp{
 	//CIRCLES
 		int maxCircles;//nombre max de cercles par balle
 		int nbCircles;//nombre de cercles.
-		int circleWidth;//largeur de cercles
+		float circleWidth;//largeur de cercles
 		int circleIncrease;//largeur entre deux cercles.
 		int maxCircleWidth;
 		int maxCircleIncrease;
