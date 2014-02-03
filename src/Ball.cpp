@@ -42,9 +42,19 @@ Ball::Ball(int refNumber_,int posx,int posy,int posz,int synthNumber_,string  pa
 	ballPlane.setPosition(200,200,10); //idem
 	ballPlane.mapTexCoords(0, 0, texBall.getWidth(), texBall.getHeight());
 
-    hue = ofRandom(0,255);
-    saturation = 250;
-    brigthness = 200;
+    if (synthNumber>=0 && synthNumber<10)
+    {
+        hue = listHue[synthNumber];
+        saturation = 150;
+        brigthness = 255;
+    }
+    else
+    {
+        hue = 42;
+        saturation = 0;
+        brigthness = 255;
+    }
+    ballColor.setHsb(hue,saturation,brigthness);
 
 	fadeIn(r);
 	cout<<" : ["<<posx<<","<<posy<<","<<posz<<"] synth :"<<synthNumber<<endl;
@@ -249,6 +259,7 @@ void Ball::draw()
 	ballPlane.set(r,r);
 	ballPlane.setPosition(position.x, position.y,position.z);
 	ballPlane.draw();
+
 	texBall.unbind();
 
 	// we display each ring from each ball
