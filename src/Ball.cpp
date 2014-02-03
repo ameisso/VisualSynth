@@ -97,7 +97,14 @@ void  Ball::fadeOut()
 	r=0;
 	isDead=true;
 }
-
+void Ball::setLifeSpeed(float life)
+{
+	lifeSpeed=life;
+}
+void Ball::setNoiseFactor(float factor)
+{
+	noiseFactor=factor;
+}
 ofVec3f Ball::getPosition()
 {
 	return position;

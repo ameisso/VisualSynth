@@ -14,24 +14,21 @@ public:
 
     // BALLES
     Ball(int refNumber,int posx,int posy, int posz ,int synthNumber_,string pathToImage_, int noiseFactor_=100, float lifeSpeed=0.995,int nbCircles_=0,int circleWidth_=5,int circleWidthFactor_=30,float maxRadius_=100, float minRadius_=10);
-
+	
     void update();
-
     void fadeIn(float r);
     void fadeOut();
-
+	void setLifeSpeed(float life);
+	void setNoiseFactor(float factor);
     ofVec3f getPosition();
-ofVec3f getVelocity();
+	ofVec3f getVelocity();
     bool checkIfDead();
     float getRadius();
-
     int getSynthNumber();
     int refNumber;
     int getRefNumber();
-
     void setRadius(float radius);
     void setNoiseFactor(int nF);
-
     //CERCLES
     void removeCircles();
     void addCircle(int circleRadius, int circleWidth);

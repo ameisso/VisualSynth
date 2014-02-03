@@ -33,6 +33,8 @@ void testApp::update()
 	sendOscGeneral();
     for(vector< ofPtr<Ball> >::iterator it = theBalls.begin(); it != theBalls.end(); ++it)
         {
+			(*it)->setNoiseFactor(ballNoiseFactor);
+			(*it)->setLifeSpeed(lifeSpeed);
             (*it)->update();
             sendOscInfos((*it));
             for(vector< ofPtr<Ball> >::iterator sit = theBalls.begin(); sit != theBalls.end(); ++sit)
@@ -153,18 +155,19 @@ void testApp::keyPressed(int key)
 		cout<<"curvedLinks "<<ofToString(curvedLinks)<<endl;
         curvedLinks=!curvedLinks;
     }
-    if (key == 99||key==67)// c or C
+    if (key == 80||key==112)// p or P
     {
+		if(permanentBalls.size()!=0)
+		{
+			permanentBalls.clear();
+			cout<<"permanent balls removed"<<endl;
+		}
+		else
+		{
 		cout<<"permanantBalls created "<<endl;
         addPermanentBalls();
+		}
     }
-    if (key == 99||key==67)// c or C
-    {
-		permanentBalls.clear();
-		cout<<"permanent balls removed"<<endl;
-    }
-
-
 }
 
 //--------------------------------------------------------------
@@ -188,13 +191,11 @@ void testApp::mouseDragged(int x, int y, int button)
 //--------------------------------------------------------------r
 void testApp::mousePressed(int x, int y, int button)
 {
-    int synthNbr=attributeSynth();
-	/* cout<<"Synth "<<synthNbr<<endl;
-	 cout<<"NF"<<ballNoiseFactor<<endl;
-	 cout<<"LS"<<lifeSpeed<<endl;*/
-    string path=pathToImages+"/"+theTextures[synthNbr];
-    theBalls.push_back(ofPtr<Ball> (new Ball(refNumber,x,y,0,synthNbr,path,ballNoiseFactor,lifeSpeed,nbCircles,circleWidth,circleIncrease)));
-    refNumber+=1;
+	int synthNbr=attributeSynth();
+	string path=pathToImages+"/"+theTextures[0];
+	theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,x,y,0,synthNbr,path,ballNoiseFactor,lifeSpeed,nbCircles,circleWidth,circleIncrease,50,10)));
+	refNumber+=1;
+
 }
 
 //--------------------------------------------------------------
@@ -438,8 +439,6 @@ void testApp::readXmlSetup()
     nbSynthsForBalls=configFile.getIntValue("nbSynthsForBalls");
     cout<<"nbSynthsForBalls :"<<nbSynthsForBalls<<endl;
     configFile.setTo("../textures");
-    pathToImages=configFile.getValue("path");
-    cout<<"path to Images :"<<pathToImages<<endl;
     int nbTextures=configFile.getNumChildren()-1;
     cout<<"NB textures : "<<nbTextures<<endl;
     for(int i=0; i<nbTextures; i++)
@@ -447,8 +446,6 @@ void testApp::readXmlSetup()
         theTextures.push_back(configFile.getValue("image["+ofToString(i)+"]"));
         cout<<"texture["<<ofToString(i)<<"]"<<configFile.getValue("image["+ofToString(i)+"]")<<endl;
     }
-
-
     file.close();
     buffer.clear();
     configFile.clear();
