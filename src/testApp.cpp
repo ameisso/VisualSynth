@@ -327,7 +327,7 @@ void testApp::sendOscGeneral()
 	}
 	else
 	{
-	msgToSend.addFloatArg(0.1);
+	msgToSend.addFloatArg(0);
 	msgToSend.addFloatArg(0);
 	}
 	oscSender.sendMessage(msgToSend);
