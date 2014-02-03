@@ -6,6 +6,7 @@ Circle::Circle(int radius_, int circleWidth_, ofVec3f center_)
     center=center_;
 
     ofPoint p(center.x,center.y,1);
+    ring.setCircleResolution(100);
     ring.circle(p,radius_+circleWidth_/2);
     ring.circle(p,radius_-circleWidth_/2);
 	ring.close();
@@ -23,6 +24,7 @@ void Circle::update(ofVec3f center_)
 
     ring.clear();
     ofPoint p(center);
+    ring.setCircleResolution(100);
     ring.circle(p,radius+circleWidth/2);
     ring.circle(p,radius-circleWidth/2);
 	ring.close();
