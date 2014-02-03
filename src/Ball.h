@@ -84,6 +84,7 @@ private:
     ofPlanePrimitive ballPlane;
     ofImage texBall;
 
+    const int listHue[10] = {5, 10, 22, 28, 32, 34, 37, 39, 42, 44};
 };
 
 #endif // BALL_H
