@@ -283,3 +283,4 @@ void Ball::setBrightness(int newBrigthness)
     else
         brigthness = 0;
 }
+
