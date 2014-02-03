@@ -1,3 +1,15 @@
+#ifndef BALL_H
+#define BALL_H
+#include "ofMain.h"
+#include "Circle.h"
+#include "Link.h"
+class Link;
+class Ball
+{
+
+public:
+    Ball();
+    virtual ~Ball();
 
 
     // BALLES
@@ -9,7 +21,7 @@
     void fadeOut();
 
     ofVec3f getPosition();
-	ofVec3f getVelocity();
+ofVec3f getVelocity();
     bool checkIfDead();
     float getRadius();
 
@@ -53,7 +65,7 @@ private:
     float lifeSpeed;
     float maxRadius;//max radius of the ball
     float minRadius;
-    float r;//current radius of the ball vector < ofPtr<Circle> >  theCircles;
+    float r;//current radius of the ball vector < ofPtr<Circle> > theCircles;
     int noiseFactor;//noise factor that make the ball move arround her position
 
     // CERCLES
@@ -77,3 +89,4 @@ private:
 
 };
 
+#endif // BALL_H

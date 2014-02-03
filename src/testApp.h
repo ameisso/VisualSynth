@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 #pragma once
 #include "ofMain.h"
 #include "ofxOsc.h"
@@ -30,6 +28,7 @@ class testApp : public ofBaseApp{
 		void sendOscGeneral();
         int attributeSynth();//fonction qui attribue un synthétiseur à une balle.
         void readXmlSetup();
+        void addPermanentBalls();
 
 	//BALLS
 		int profZ; //profondeur en z de la fenetre (jusqu'à ou on peut créer des balles en profondeur
@@ -67,6 +66,5 @@ class testApp : public ofBaseApp{
         int oscReceivePort;
         int oscSendPort;
         string oscSendAddress;
-		
+
 };
->>>>>>> b8d7802e7c1b21f5d357d3d7e0119afdf98efea6

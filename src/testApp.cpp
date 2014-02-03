@@ -9,7 +9,6 @@ void testApp::setup()
     readXmlSetup();
     OscReceiver.setup(oscReceivePort);
     oscSender.setup(oscSendAddress,oscSendPort);
-    //profZ=500; //a modifier, pourra être dans le fichier de config.
     for (int i=0; i<nbSynthsForBalls;i++)
     {
         synthsForBalls.push_back(true);
@@ -23,16 +22,8 @@ void testApp::setup()
 	curveFactor=1;
 	curvePosition=0;
 	curveAmplitude=0;
-    int immortal = 1;
-    int permanentBallCenterX1 = 0.25*ofGetWindowWidth();
-    int permanentBallCenterX2 = 0.75*ofGetWindowWidth();
-    int permanentBallCenterY = 0.5*ofGetWindowHeight();
-    string path=pathToImages+"/"+theTextures[0];
-    permanentBalls.push_back(ofPtr<Ball> (new Ball(100,permanentBallCenterX1,permanentBallCenterY,0,100,path,0,immortal,0,0,0,400,400)));
-    permanentBalls.push_back(ofPtr<Ball> (new Ball(101,permanentBallCenterX2,permanentBallCenterY,0,101,path,0,immortal,0,0,0,400,400)));
-
     showLinks=true;
-
+    cout<<"END OF INIT"<<endl;
 }
 
 //--------------------------------------------------------------
@@ -159,9 +150,20 @@ void testApp::keyPressed(int key)
     }
 	if (key == 99||key==67)// c or C
     {
-		cout<<"curvedLinks"<<ofToString(curvedLinks)<<endl;
+		cout<<"curvedLinks "<<ofToString(curvedLinks)<<endl;
         curvedLinks=!curvedLinks;
     }
+    if (key == 99||key==67)// c or C
+    {
+		cout<<"permanantBalls created "<<endl;
+        addPermanentBalls();
+    }
+    if (key == 99||key==67)// c or C
+    {
+		permanentBalls.clear();
+		cout<<"permanent balls removed"<<endl;
+    }
+
 
 }
 
@@ -216,6 +218,17 @@ void testApp::gotMessage(ofMessage msg)
 //--------------------------------------------------------------
 void testApp::dragEvent(ofDragInfo dragInfo)
 {
+
+}
+void testApp::addPermanentBalls()
+{
+    int immortal = 1;
+    int permanentBallCenterX1 = 0.25*ofGetWindowWidth();
+    int permanentBallCenterX2 = 0.75*ofGetWindowWidth();
+    int permanentBallCenterY = 0.5*ofGetWindowHeight();
+    string path=pathToImages+"/"+theTextures[0];
+    permanentBalls.push_back(ofPtr<Ball> (new Ball(100,permanentBallCenterX1,permanentBallCenterY,0,100,path,0,immortal,0,0,0,400,400)));
+    permanentBalls.push_back(ofPtr<Ball> (new Ball(101,permanentBallCenterX2,permanentBallCenterY,0,101,path,0,immortal,0,0,0,400,400)));
 
 }
 void testApp::receiveOscMessage()
@@ -335,7 +348,7 @@ void testApp::sendOscGeneral()
     msgToSend.setAddress(address);
 	msgToSend.addFloatArg(theBalls.size());
 	oscSender.sendMessage(msgToSend);
-	
+
 }
 //fonction qui va envoyer par osc tout les paramètres de la balle.
 void testApp::sendOscInfos(ofPtr<Ball>& ballToSend)
