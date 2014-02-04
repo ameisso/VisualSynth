@@ -13,7 +13,7 @@ Ball::~Ball()
 
 // BALLES
 
-Ball::Ball(int refNumber_,int posx,int posy,int posz,int synthNumber_,string  pathToImage_, int noiseFactor_, float lifeSpeed_,int nbCircles_,int circleWidth_, int circleWidthFactor_, float maxRadius_, float minRadius_)
+Ball::Ball(int refNumber_,int posx,int posy,int posz,int synthNumber_,string  pathToImage_, int noiseFactor_, float lifeSpeed_,int nbCircles_,int circleWidth_, int circleWidthFactor_, float maxRadius_, float minRadius_, float brightness)
 {
     refNumber=refNumber_;
     cout<<"newBall "<<refNumber;
@@ -186,6 +186,14 @@ void Ball::setCircleWidth(float factor)
 vector<ofPtr<Circle> > Ball::getTheCircles()
 {
 	return theCircles;
+}
+void Ball::setCircleBrightness(int brightness_)
+{
+	for(vector< ofPtr<Circle> >::iterator it = theCircles.begin(); it != theCircles.end(); ++it)
+	{
+		(*it)->setBrightness(brightness_);
+			cout<<"brightness dans balle"<<brightness_<<endl;
+	}
 }
 
 // LIENS ****************************************************************************

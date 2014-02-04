@@ -9,20 +9,24 @@ void testApp::setup()
     readXmlSetup();
     OscReceiver.setup(oscReceivePort);
     oscSender.setup(oscSendAddress,oscSendPort);
+	oscFeedBack.setup(oscControlerIP,oscControlerPort);
     for (int i=0; i<nbSynthsForBalls;i++)
     {
         synthsForBalls.push_back(true);
     }
-    ballNoiseFactor=100;
-    lifeSpeed=0.998;
-	circleWidth=3;
-	circleIncrease=10;
+    ballNoiseFactor=0;
+    lifeSpeed=1;//varie entre 0.9 et 1
+	circleWidth=0;
+	circleIncrease=0;
 	nbCircles=0;
-	curvedLinks=true;
-	curveFactor=1;
+	curvedLinks=false;
+	curveFactor=0;
 	curvePosition=0;
 	curveAmplitude=0;
-    showLinks=true;
+    showLinks=false;
+	linkColorHue=255;
+	linkColorSaturation=0;
+	linkColorBrightness=255;
     cout<<"END OF INIT"<<endl;
 }
 
@@ -31,6 +35,7 @@ void testApp::update()
 {
     receiveOscMessage();
 	sendOscGeneral();
+	sendFeedback();
     for(vector< ofPtr<Ball> >::iterator it = theBalls.begin(); it != theBalls.end(); ++it)
         {
 			(*it)->setNoiseFactor(ballNoiseFactor);
@@ -75,7 +80,6 @@ void testApp::update()
 void testApp::draw()
 {
     ofBackground(0);
-
     for(vector< ofPtr<Ball> >::iterator it = permanentBalls.begin(); it != permanentBalls.end(); ++it)
         {
             (*it)->draw();
@@ -91,7 +95,7 @@ void testApp::draw()
 			{
 				if((*it)->checkLink((*sit)->getRefNumber()))
 				{
-                    ofSetHexColor(0xffffff);
+                    ofSetColor(linkColor);
 					ofVec3f p1,p2,d,n;
 					if(curvedLinks)
 					{
@@ -144,6 +148,7 @@ void testApp::keyPressed(int key)
     {
         cout<<"all ball unloaded"<<endl;
 		theBalls.clear();
+		setup();
     }
     if (key == 108||key==76)// l or L
     {
@@ -251,7 +256,7 @@ void testApp::receiveOscMessage()
 				//cout<<xVal<<" "<<yVal<<endl;
 				int synthNbr=attributeSynth();
 				string path=pathToImages+"/"+theTextures[synthNbr];
-				theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,xVal,yVal,zPos,synthNbr,path,ballNoiseFactor,lifeSpeed,nbCircles,circleWidth,circleIncrease,50,10)));
+				theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,xVal,yVal,zPos,synthNbr,path,ballNoiseFactor,lifeSpeed,nbCircles,circleWidth,circleIncrease,50,10,ballBrightness)));
 				refNumber+=1;
 				ofxOscMessage msgToSend = ofxOscMessage();
 				msgToSend.setAddress("/newBall");
@@ -263,7 +268,7 @@ void testApp::receiveOscMessage()
         {
             int synthNbr=attributeSynth();
             string path=pathToImages+"/"+theTextures[synthNbr];
-            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(1)*ofGetWidth(),ofGetHeight()-OscReceivedMessage.getArgAsFloat(0)*ofGetHeight(),zPos,synthNbr,path,ballNoiseFactor,lifeSpeed,0,0,0,50,10)));
+            theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,OscReceivedMessage.getArgAsFloat(1)*ofGetWidth(),ofGetHeight()-OscReceivedMessage.getArgAsFloat(0)*ofGetHeight(),zPos,synthNbr,path,ballNoiseFactor,lifeSpeed,0,0,0,50,10,ballBrightness)));
             refNumber+=1;
         }
 		else if (OscReceivedMessage.getAddress()=="/1/multifader1/1")//durée de vie de la balle
@@ -273,7 +278,7 @@ void testApp::receiveOscMessage()
         }
         else if (OscReceivedMessage.getAddress()=="/1/multifader1/2")//vitesse de déplacement
         {
-			ballNoiseFactor=(int)200*OscReceivedMessage.getArgAsFloat(0);
+			ballNoiseFactor=ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,200);
             cout<<"noiseFactor :"<<ballNoiseFactor<<endl;
         }
         else if (OscReceivedMessage.getAddress()=="/1/multifader1/3")//position en z
@@ -312,6 +317,7 @@ void testApp::receiveOscMessage()
 		{
 			theBalls.clear();
 			cout<<"all ball  unloaded"<<endl;
+			setup();//on rétablit l'état initial.
         }
 		else if (OscReceivedMessage.getAddress()=="/toggleLink")
 		{
@@ -336,11 +342,117 @@ void testApp::receiveOscMessage()
 				(*it)->removeCircles();
 			}
         }
+		else if(OscReceivedMessage.getAddress()=="/brightness/1")//intensité des balles
+		{
+			ballBrightness=ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,255);
+			for(vector< ofPtr<Ball> >::iterator it = theBalls.begin(); it != theBalls.end(); ++it)
+			{
+				(*it)->setBrightness(ballBrightness);
+			}
+			cout<<"ball brightness : "<<ballBrightness<<endl;
+		}
+		else if(OscReceivedMessage.getAddress()=="/brightness/2")//intensité des liens
+		{
+			linkColorBrightness=ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,255);
+			linkColor.setBrightness(linkColorBrightness);
+			cout<<"link brightness : "<<ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,255)<<endl;
+		}
+		else if(OscReceivedMessage.getAddress()=="/brightness/3")//intensité des cercles
+		{
+			for(vector< ofPtr<Ball> >::iterator it = theBalls.begin(); it != theBalls.end(); ++it)
+			{
+				(*it)->setCircleBrightness(ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,255));
+			}
+			cout<<"circle brightness : "<<ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,255)<<endl;
+		}
         else
 		{
 			cout<<"I don't know this message :"<<ofToString(OscReceivedMessage.getAddress())<<endl;
 		}
     }
+}
+//envoie le feedback sur la tablette
+void testApp::sendFeedback()
+{
+	ofxOscMessage msgToSend = ofxOscMessage();
+
+	//concerne les balles
+	msgToSend = ofxOscMessage();//attention, réinitialise le message.
+	msgToSend.setAddress("/1/multifader1/1");
+	msgToSend.addFloatArg(ofMap(lifeSpeed,0.9,1,0,1));
+	oscFeedBack.sendMessage(msgToSend);
+	msgToSend = ofxOscMessage();//attention, réinitialise le message.
+	msgToSend.setAddress("/1/multifader1/2");
+	msgToSend.addFloatArg(ofMap(ballNoiseFactor,0,200,0,1));
+	oscFeedBack.sendMessage(msgToSend);
+	msgToSend = ofxOscMessage();//attention, réinitialise le message.
+	msgToSend.setAddress("/1/multifader1/3");
+	msgToSend.addFloatArg(ofMap(zPos,0,profZ,0,1));
+	oscFeedBack.sendMessage(msgToSend);
+	
+	//concerne les cercles
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/1/ringFader/1");
+	msgToSend.addFloatArg(ofMap(nbCircles,0,maxCircles,0,1));
+	oscFeedBack.sendMessage(msgToSend);
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/1/ringFader/2");
+	msgToSend.addFloatArg(ofMap(circleWidth,2,maxCircleWidth,0,1));
+	oscFeedBack.sendMessage(msgToSend);
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/1/ringFader/3");
+	msgToSend.addFloatArg(ofMap(circleIncrease,0,maxCircleIncrease,0,1));
+	oscFeedBack.sendMessage(msgToSend);
+	
+	//concerne les liens
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/link/1");
+	msgToSend.addFloatArg(ofMap(curveFactor,0,0.5,0,1));
+	oscFeedBack.sendMessage(msgToSend);
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/link/2");
+	msgToSend.addFloatArg(ofMap(curveAmplitude,0,0.5,0,1));
+	oscFeedBack.sendMessage(msgToSend);
+	
+	//valeurs texte
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/infos");
+	msgToSend.addStringArg(ofToString(theBalls.size())+" balls @ "+ofToString(ofGetFrameRate())+" FPS");
+	oscFeedBack.sendMessage(msgToSend);
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/linkCurve");
+	msgToSend.addFloatArg(curveFactor);
+	oscFeedBack.sendMessage(msgToSend);
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/linkAmpl");
+	msgToSend.addFloatArg(curveAmplitude);
+	oscFeedBack.sendMessage(msgToSend);
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/nbCircles");
+	msgToSend.addIntArg(nbCircles);
+	oscFeedBack.sendMessage(msgToSend);
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/circleWidth");
+	msgToSend.addFloatArg(circleWidth);
+	oscFeedBack.sendMessage(msgToSend);
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/circleSpacing");
+	msgToSend.addFloatArg(circleIncrease);
+	oscFeedBack.sendMessage(msgToSend);
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/lifeS");
+	msgToSend.addFloatArg(lifeSpeed);
+	oscFeedBack.sendMessage(msgToSend);
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/speed");
+	msgToSend.addFloatArg(ballNoiseFactor);
+	oscFeedBack.sendMessage(msgToSend);
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/Zpos");
+	msgToSend.addFloatArg(zPos);
+	oscFeedBack.sendMessage(msgToSend);
+
+	//cout<<"feedback sended"<<endl;
 }
 void testApp::sendOscGeneral()
 {
@@ -385,10 +497,10 @@ void testApp::sendOscGeneral()
 	ofxOscMessage msgToSend3 = ofxOscMessage();
 	address="/BallGeneral";
     msgToSend3.setAddress(address);
+	msgToSend3.addFloatArg((float)theBalls.size());
 	msgToSend3.addFloatArg(lifeSpeed);
 	msgToSend3.addFloatArg(ballNoiseFactor);
 	msgToSend3.addFloatArg(zPos);
-	msgToSend3.addFloatArg((float)theBalls.size());
 	oscSender.sendMessage(msgToSend3);
 
 
@@ -474,6 +586,10 @@ void testApp::readXmlSetup()
     cout<<"sendPort :"<<oscSendPort<<endl;
     oscSendAddress=configFile.getValue("sendIp");
     cout<<"sendAddress :"<<oscSendAddress<<endl;
+	oscControlerIP=configFile.getValue("controlerIp");
+    cout<<"oscControlerIP :"<<oscControlerIP<<endl;
+	oscControlerPort=configFile.getIntValue("controlerPort");
+    cout<<"oscControlerPort :"<<oscControlerPort<<endl;
     configFile.setTo("../screen"); // go up and then down
     profZ=configFile.getIntValue("profondeurZ");
     cout<<"profZ :"<<profZ<<endl;

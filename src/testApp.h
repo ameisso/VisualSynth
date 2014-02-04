@@ -22,6 +22,7 @@ class testApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		void receiveOscMessage();
 		int refNumber;
+		
     private :
         vector <bool>synthsForBalls;
 		void sendOscInfos(ofPtr<Ball>&ballToSend);
@@ -37,6 +38,7 @@ class testApp : public ofBaseApp{
 		float zPos; //position en z de la balle.
 		int nbSynthsForBalls;
 		ofVec2f lastBallPosition;//evite de créer deux fois une balle avec la tablette
+		float ballBrightness;
 	//LINKS
 		int minDistToLink;
 		int maxDistToUnlink;
@@ -45,6 +47,8 @@ class testApp : public ofBaseApp{
 		float curveFactor;
 		float curvePosition;
 		float curveAmplitude;
+		ofColor linkColor;//couleur des liens en HSB
+		float linkColorHue,linkColorSaturation,linkColorBrightness;
 	//CIRCLES
 		int maxCircles;//nombre max de cercles par balle
 		int nbCircles;//nombre de cercles.
@@ -64,8 +68,12 @@ class testApp : public ofBaseApp{
         ofxOscReceiver OscReceiver;
         ofxOscMessage OscReceivedMessage;
         ofxOscSender oscSender;
+		ofxOscSender oscFeedBack;
         int oscReceivePort;
         int oscSendPort;
         string oscSendAddress;
+		string oscControlerIP;
+		int oscControlerPort;
+		void sendFeedback();//fonction qui renvoie les paramètres OSC à la tablette
 
 };

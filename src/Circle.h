@@ -11,6 +11,7 @@ public:
     int getRadius();
     int getCircleWidth();
     ofPath getRing();
+	void setBrightness(int brightness);
 
 protected:
 private:
@@ -21,6 +22,8 @@ private:
     //openGL
     ofPlanePrimitive circlePlane;
     ofImage texCircle;
+	ofColor circleColor;
+	int hue, saturation,brightness;
 };
 
 #endif // CIRCLE_H
