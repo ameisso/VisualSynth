@@ -88,9 +88,9 @@ void testApp::draw()
 	cam.begin();
 		if (camMove)//si la camera bouge
 		{
-			camCurrentPos+=camSpeed+camPos;
+			camCurrentPos+=camSpeed*camPos;
 			cam.move(camCurrentPos);
-			camCurrentLookat+=camSpeed+camLookAt;
+			camCurrentLookat+=camSpeed*camLookAt;
 			cam.lookAt(camCurrentLookat);
 			cout<<"camSpeed : "<<camSpeed<<endl;
 		}
