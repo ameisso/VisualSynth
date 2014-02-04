@@ -13,7 +13,7 @@ public:
 
 
     // BALLES
-    Ball(int refNumber,int posx,int posy, int posz ,int synthNumber_,string pathToImage_, int noiseFactor_=100, float lifeSpeed=0.995,int nbCircles_=0,int circleWidth_=5,int circleWidthFactor_=30,float maxRadius_=100, float minRadius_=10, float brightness=255);
+    Ball(int refNumber,int posx,int posy, int posz ,int synthNumber_,string pathToImage_, int noiseFactor_=100, float lifeSpeed=0.995,int nbCircles_=0,int circleWidth_=5,int circleWidthFactor_=30,float maxRadius_=100, float minRadius_=10, float brightness_=255);
 	
     void update();
     void fadeIn(float r);
@@ -47,7 +47,7 @@ public:
 
     //AFFICHAGE
     void draw();
-    void setBrightness(int newBrigthness);
+    void setBrightness(float newBrigthness);
 
 
 protected:
@@ -77,9 +77,9 @@ private:
 
     // AFFICHAGE
     ofColor ballColor;
-    int hue;
-    int brigthness;
-    int saturation;
+    float hue;
+    float brightness;
+    float saturation;
     string pathToImage;
     ofPlanePrimitive ballPlane;
     ofImage texBall;

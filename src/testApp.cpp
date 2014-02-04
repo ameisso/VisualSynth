@@ -27,6 +27,10 @@ void testApp::setup()
 	linkColorHue=255;
 	linkColorSaturation=0;
 	linkColorBrightness=255;
+	circleBrightness=0;
+	ballBrightness=0;
+	useCam=false;
+	sendFeedback();
     cout<<"END OF INIT"<<endl;
 }
 
@@ -79,6 +83,18 @@ void testApp::update()
 //--------------------------------------------------------------
 void testApp::draw()
 {
+	if(useCam)
+	{
+	cam.begin();
+		if (camMove)//si la camera bouge
+		{
+			camCurrentPos+=camSpeed+camPos;
+			cam.move(camCurrentPos);
+			camCurrentLookat+=camSpeed+camLookAt;
+			cam.lookAt(camCurrentLookat);
+			cout<<"camSpeed : "<<camSpeed<<endl;
+		}
+	}
     ofBackground(0);
     for(vector< ofPtr<Ball> >::iterator it = permanentBalls.begin(); it != permanentBalls.end(); ++it)
         {
@@ -124,7 +140,10 @@ void testApp::draw()
 			}
 		}
 	}
-    // we display each ball
+	if(useCam)
+	{
+    cam.end();
+	}
 }
 //--------------------------------------------------------------
 void testApp::keyPressed(int key)
@@ -190,7 +209,7 @@ void testApp::mouseMoved(int x, int y )
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button)
 {
-
+	cam.lookAt(ofVec3f(x,y,x));
 }
 
 //--------------------------------------------------------------r
@@ -198,7 +217,7 @@ void testApp::mousePressed(int x, int y, int button)
 {
 	int synthNbr=attributeSynth();
 	string path=pathToImages+"/"+theTextures[0];
-	theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,x,y,0,synthNbr,path,ballNoiseFactor,lifeSpeed,nbCircles,circleWidth,circleIncrease,50,10)));
+	theBalls.push_back(ofPtr<Ball> (new Ball (refNumber,x,y,0,synthNbr,path,ballNoiseFactor,lifeSpeed,nbCircles,circleWidth,circleIncrease,50,10,ballBrightness)));
 	refNumber+=1;
 
 }
@@ -342,6 +361,52 @@ void testApp::receiveOscMessage()
 				(*it)->removeCircles();
 			}
         }
+		else if (OscReceivedMessage.getAddress()=="/toggleCam")
+		{
+			if(OscReceivedMessage.getArgAsFloat(0)==1)
+			{
+				
+				useCam=!useCam;
+				if (useCam)
+				{
+					cam.setupPerspective();
+					cout<<"cam enabled @ "<<camPos<<" viewing "<<camLookAt<<endl;
+					camCurrentPos.zero();
+					camCurrentLookat.zero();
+					//cam.setPosition(0,0,0); // where are we?
+					//cam.lookAt(ofVec3f(0,0,500)); // what are we looking at?
+					ofxOscMessage msgToSend = ofxOscMessage();
+					msgToSend = ofxOscMessage();//attention, rŽinitialise le message.
+					msgToSend.setAddress("/xyPos");
+					msgToSend.addFloatArg(0);
+					msgToSend.addFloatArg(0);
+					oscFeedBack.sendMessage(msgToSend);
+					msgToSend = ofxOscMessage();//attention, rŽinitialise le message.
+					msgToSend.setAddress("/xyLookat");
+					msgToSend.addFloatArg(0);
+					msgToSend.addFloatArg(0);
+					oscFeedBack.sendMessage(msgToSend);
+					msgToSend = ofxOscMessage();//attention, rŽinitialise le message.
+					msgToSend.setAddress("/zPos");
+					msgToSend.addFloatArg(0);
+					oscFeedBack.sendMessage(msgToSend);
+					msgToSend = ofxOscMessage();//attention, rŽinitialise le message.
+					msgToSend.setAddress("/zLookat");
+					msgToSend.addFloatArg(0);
+					msgToSend.addFloatArg(0);
+					oscFeedBack.sendMessage(msgToSend);
+					camMove=false;
+					msgToSend = ofxOscMessage();//attention, rŽinitialise le message.
+					msgToSend.setAddress("/camMove");
+					msgToSend.addFloatArg(0);
+					oscFeedBack.sendMessage(msgToSend);
+				}
+				else
+				{
+					cout<<"cam disabled"<<endl;
+				}
+			}
+        }
 		else if(OscReceivedMessage.getAddress()=="/brightness/1")//intensitŽ des balles
 		{
 			ballBrightness=ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,255);
@@ -355,19 +420,74 @@ void testApp::receiveOscMessage()
 		{
 			linkColorBrightness=ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,255);
 			linkColor.setBrightness(linkColorBrightness);
-			cout<<"link brightness : "<<ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,255)<<endl;
+			cout<<"link brightness : "<<linkColorBrightness<<endl;
 		}
 		else if(OscReceivedMessage.getAddress()=="/brightness/3")//intensitŽ des cercles
 		{
+			circleBrightness=ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,255);
 			for(vector< ofPtr<Ball> >::iterator it = theBalls.begin(); it != theBalls.end(); ++it)
 			{
-				(*it)->setCircleBrightness(ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,255));
+				(*it)->setCircleBrightness(circleBrightness);
 			}
-			cout<<"circle brightness : "<<ofMap(OscReceivedMessage.getArgAsFloat(0),0,1,0,255)<<endl;
+			cout<<"circle brightness : "<<circleBrightness<<endl;
+		}
+		else if(OscReceivedMessage.getAddress()=="/xyPos")
+		{
+			camPos.x=OscReceivedMessage.getArgAsFloat(0);
+			camPos.y=OscReceivedMessage.getArgAsFloat(1);
+		}
+		else if(OscReceivedMessage.getAddress()=="/xyLookat")		{
+			
+			camLookAt.x=OscReceivedMessage.getArgAsFloat(0);
+			camLookAt.y=OscReceivedMessage.getArgAsFloat(1);
+		}
+		else if(OscReceivedMessage.getAddress()=="/zPos")
+		{
+			camPos.z=OscReceivedMessage.getArgAsFloat(0);
+			cout<<"camera zPos : "<<camPos.z<<endl;
+		}
+		else if(OscReceivedMessage.getAddress()=="/zLookat")
+		{
+			camLookAt.z=OscReceivedMessage.getArgAsFloat(0);
+			cout<<"camera zLookat : "<<camLookAt.z<<endl;
+		}
+		else if(OscReceivedMessage.getAddress()=="/camSpeed")
+		{
+			camSpeed=OscReceivedMessage.getArgAsFloat(0);
+			cout<<"camSpeed : "<<camSpeed<<endl;
+			
+		}
+		else if (OscReceivedMessage.getAddress()=="/camMove")
+		{
+			ofxOscMessage msgToSend = ofxOscMessage();
+			if (OscReceivedMessage.getArgAsFloat(0)==1)
+			{
+				if(useCam)// on ne peut bouger que si on a la camera
+				{
+				cout<<"camera Running"<<endl;
+				camMove=true;
+				}
+				else// on dŽsenclenche le bouton
+				{
+					msgToSend = ofxOscMessage();//attention, rŽinitialise le message.
+					msgToSend.setAddress("/camMove");
+					msgToSend.addFloatArg(0);
+					oscFeedBack.sendMessage(msgToSend);
+				}
+			}
+			else
+			{
+				camMove=false;
+				cout<<"camera Stoped"<<endl;
+				msgToSend = ofxOscMessage();//attention, rŽinitialise le message.
+				msgToSend.setAddress("/camSpeed");
+				msgToSend.addFloatArg(0);
+				oscFeedBack.sendMessage(msgToSend);
+			}
 		}
         else
 		{
-			cout<<"I don't know this message :"<<ofToString(OscReceivedMessage.getAddress())<<endl;
+			cout<<"I don't know this message :"<<ofToString(OscReceivedMessage.getAddress())<<" : "<<OscReceivedMessage.getArgAsFloat(0)<<endl;
 		}
     }
 }
@@ -413,6 +533,21 @@ void testApp::sendFeedback()
 	msgToSend.setAddress("/link/2");
 	msgToSend.addFloatArg(ofMap(curveAmplitude,0,0.5,0,1));
 	oscFeedBack.sendMessage(msgToSend);
+	
+//TODO BRIGHTNESS
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/brightness/1");
+	msgToSend.addFloatArg(ofMap(ballBrightness,0,255,0,1));
+	oscFeedBack.sendMessage(msgToSend);
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/brightness/2");
+	msgToSend.addFloatArg(ofMap(linkColorBrightness,0,255,0,1));
+	oscFeedBack.sendMessage(msgToSend);
+	msgToSend = ofxOscMessage();
+	msgToSend.setAddress("/brightness/3");
+	msgToSend.addFloatArg(ofMap(circleBrightness,0,255,0,1));
+	oscFeedBack.sendMessage(msgToSend);
+	
 	
 	//valeurs texte
 	msgToSend = ofxOscMessage();

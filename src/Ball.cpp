@@ -13,7 +13,7 @@ Ball::~Ball()
 
 // BALLES
 
-Ball::Ball(int refNumber_,int posx,int posy,int posz,int synthNumber_,string  pathToImage_, int noiseFactor_, float lifeSpeed_,int nbCircles_,int circleWidth_, int circleWidthFactor_, float maxRadius_, float minRadius_, float brightness)
+Ball::Ball(int refNumber_,int posx,int posy,int posz,int synthNumber_,string  pathToImage_, int noiseFactor_, float lifeSpeed_,int nbCircles_,int circleWidth_, int circleWidthFactor_, float maxRadius_, float minRadius_, float brightness_)
 {
     refNumber=refNumber_;
     cout<<"newBall "<<refNumber;
@@ -31,6 +31,7 @@ Ball::Ball(int refNumber_,int posx,int posy,int posz,int synthNumber_,string  pa
     isDead=false;
     lifeSpeed=lifeSpeed_;
     synthNumber=synthNumber_;
+	brightness=brightness_;
 
     velocity = ofVec3f(0,0,0);
 
@@ -46,15 +47,13 @@ Ball::Ball(int refNumber_,int posx,int posy,int posz,int synthNumber_,string  pa
     {
         hue = listHue[synthNumber];
         saturation = 150;
-        brigthness = 255;
     }
     else
     {
         hue = 42;
         saturation = 0;
-        brigthness = 255;
     }
-    ballColor.setHsb(hue,saturation,brigthness);
+    ballColor.setHsb(hue,saturation,brightness);
 
 	fadeIn(r);
 	cout<<" : ["<<posx<<","<<posy<<","<<posz<<"] synth :"<<synthNumber<<endl;
@@ -264,7 +263,7 @@ bool Ball::checkLink(int refNumber)
 void Ball::draw()
 {
 	texBall.bind();
-	ballColor.setHsb(hue,saturation,brigthness);
+	ballColor.setHsb(hue,saturation,brightness);
 	ofSetColor(ballColor);
 	ballPlane.set(r,r);
 	ballPlane.setPosition(position.x, position.y,position.z);
@@ -280,17 +279,9 @@ void Ball::draw()
 }
 
 
-void Ball::setBrightness(int newBrigthness)
+void Ball::setBrightness(float newBrigthness)
 {
-    if (newBrigthness < 256 && newBrigthness>=0)
-    {
-        brigthness = newBrigthness;
-    }
-    else if (newBrigthness>255)
-    {
-        brigthness = 255;
-    }
-    else
-        brigthness = 0;
+
+        brightness = newBrigthness;
 }
 

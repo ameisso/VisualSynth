@@ -56,6 +56,7 @@ class testApp : public ofBaseApp{
 		int circleIncrease;//largeur entre deux cercles.
 		int maxCircleWidth;
 		int maxCircleIncrease;
+		float circleBrightness;
 	//TEXTURES
         string pathToImages;
         string imageName;
@@ -75,5 +76,13 @@ class testApp : public ofBaseApp{
 		string oscControlerIP;
 		int oscControlerPort;
 		void sendFeedback();//fonction qui renvoie les paramètres OSC à la tablette
-
+	//CAMERA
+		ofCamera cam;
+		bool useCam;
+		bool camMove;
+	ofVec3f camCurrentPos;
+	ofVec3f camCurrentLookat;
+		ofVec3f camPos;//la ou est la caméra
+		ofVec3f camLookAt;//la ou regarde la caméra
+	    float camSpeed;//vitesse dedéplacement caméra
 };
